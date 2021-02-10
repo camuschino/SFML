@@ -19,8 +19,9 @@ g++ -c main.cpp
 ```
 
 Ahora se genera un exe con el .o y los modulos de SFML que se usaron en el programa.
+```
 g++ main.o -o NOMBRE_DE_PROGRAMA -lsfml-graphics -lsfml-window -lsfml-system
-
+```
 Si se ha descargo el paquede desde la pagina y se esta usando el paquete de manera independiente se hace de la siguiente forma.
 
 Se compila el .cpp, y se genera un archivo con el mismo nombre con extension .o que es el codigo maquina y se agrega el lugar donde esta el PATH de SFML.
