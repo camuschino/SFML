@@ -18,7 +18,7 @@ type mapPoint struct {
 
 const (
 	windowDimentionX, windowDimentionY int     = 500, 500 // window dimention
-	sizeBlock                          int     = 100      // large: 100. medium: 50, little: 20, nano: 10
+	sizeBlock                          int     = 20       // large: 100. medium: 50, little: 20, nano: 10
 	fieldDimentionX, fieldDimentionY   int     = ((windowDimentionX / sizeBlock) * 2) + 1, ((windowDimentionY / sizeBlock) * 2) + 2
 	sizeField                          int     = sizeBlock / 2
 	movementDistance                   float32 = float32(sizeField)
@@ -47,13 +47,11 @@ func run() {
 
 	createNewMap()
 	setObjectPositions()
-	arrayToCheck[playerPositionX][playerPositionY] = true
 
 	renderMapAndObjects(imd, win)
-	time.Sleep(3000 * time.Millisecond)
 
 	for true {
-		// a := !checkMapByBFS(playerPositionY, playerPositionX, imd, win)
+		// a := !checkMapByBFS(playerPositionX, playerPositionY, imd, win)
 		a := !checkMapByDFS(playerPositionX, playerPositionY, imd, win)
 		println(a)
 		createNewMap()
@@ -132,15 +130,15 @@ func getWall(x, y int) (px pixel.Rect) {
 func getObjects() (pyVec, objVec pixel.Vec) {
 
 	pyX := float64((playerPositionX * sizeField) + int(movementDistance/2))
-	pyVec.X = pyX
-
 	pyY := float64((playerPositionY * sizeField) + int(movementDistance/2))
+
+	pyVec.X = pyX
 	pyVec.Y = pyY
 
 	objX := float64((objectivePositionX * sizeField) + int(movementDistance/2))
-	objVec.X = objX
-
 	objY := float64((objectivePositionY * sizeField) + int(movementDistance/2))
+
+	objVec.X = objX
 	objVec.Y = objY
 	return
 }
@@ -163,7 +161,7 @@ func setObjectPositions() {
 		xPlayer = r1.Intn(randX)
 		yPlayer = r1.Intn(randY)
 
-		if !arrayToMap[xPlayer][yPlayer] {
+		if !arrayToMap[yPlayer][xPlayer] {
 			validPosition = true
 			playerPositionX = xPlayer
 			playerPositionY = yPlayer
@@ -192,6 +190,7 @@ func setObjectPositions() {
 func checkMapByBFS(xActual, yActual int, imd *imdraw.IMDraw, win *pixelgl.Window) (validMap bool) {
 	queue := list.New()
 	objectivePoint := mapPoint{xPoint: objectivePositionX, yPoint: objectivePositionY}
+	arrayToCheck[xActual][yActual] = true
 
 	validMap = false
 
@@ -245,7 +244,7 @@ func checkMapByBFS(xActual, yActual int, imd *imdraw.IMDraw, win *pixelgl.Window
 		imd.Rectangle(0)
 		imd.Draw(win)
 		win.Update()
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(20 * time.Millisecond)
 
 		if objectivePoint == currentPoint.Value {
 			validMap = true
@@ -302,18 +301,18 @@ func checkMapByDFS(yActual, xActual int, imd *imdraw.IMDraw, win *pixelgl.Window
 	// println(xActual, yActual)
 
 	// Check if this point is the point where is the objective.
-	if !(playerPositionX == xActual && playerPositionY == yActual) {
+	if !(playerPositionX == yActual && playerPositionY == xActual) {
 		imd.Color = colornames.Yellow
 		px := getWall(yActual, xActual)
 		imd.Push(px.Min, px.Max)
 		imd.Rectangle(0)
 		imd.Draw(win)
 		win.Update()
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(20 * time.Millisecond)
 	}
 
 	// Check if this point is the point where is the objective.
-	if objectivePositionX == xActual && objectivePositionY == yActual {
+	if objectivePositionY == xActual && objectivePositionX == yActual {
 		// println("EXITO")
 		return true
 	}
