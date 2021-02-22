@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/list"
 	"math/rand"
 	"time"
 
@@ -10,9 +11,14 @@ import (
 	"golang.org/x/image/colornames"
 )
 
+type mapPoint struct {
+	xPoint int
+	yPoint int
+}
+
 const (
 	windowDimentionX, windowDimentionY int     = 500, 500 // window dimention
-	sizeBlock                          int     = 20       // large: 100. medium: 50, little: 20, nano: 10
+	sizeBlock                          int     = 100      // large: 100. medium: 50, little: 20, nano: 10
 	fieldDimentionX, fieldDimentionY   int     = ((windowDimentionX / sizeBlock) * 2) + 1, ((windowDimentionY / sizeBlock) * 2) + 2
 	sizeField                          int     = sizeBlock / 2
 	movementDistance                   float32 = float32(sizeField)
@@ -41,11 +47,14 @@ func run() {
 
 	createNewMap()
 	setObjectPositions()
+	arrayToCheck[playerPositionX][playerPositionY] = true
 
 	renderMapAndObjects(imd, win)
+	time.Sleep(3000 * time.Millisecond)
 
 	for true {
-		a := !checkMapByDFS(playerPositionY, playerPositionX, imd, win)
+		// a := !checkMapByBFS(playerPositionY, playerPositionX, imd, win)
+		a := !checkMapByDFS(playerPositionX, playerPositionY, imd, win)
 		println(a)
 		createNewMap()
 		setObjectPositions()
@@ -116,7 +125,7 @@ func renderMapAndObjects(imd *imdraw.IMDraw, win *pixelgl.Window) {
 func getWall(x, y int) (px pixel.Rect) {
 	posX := float64(x * sizeField)
 	posY := float64(y * sizeField)
-	px = pixel.R(posY, posX, posY+float64(sizeField), posX+float64(sizeField))
+	px = pixel.R(posX, posY, posX+float64(sizeField), posY+float64(sizeField))
 	return
 }
 
@@ -154,7 +163,7 @@ func setObjectPositions() {
 		xPlayer = r1.Intn(randX)
 		yPlayer = r1.Intn(randY)
 
-		if !arrayToMap[yPlayer][xPlayer] {
+		if !arrayToMap[xPlayer][yPlayer] {
 			validPosition = true
 			playerPositionX = xPlayer
 			playerPositionY = yPlayer
@@ -169,12 +178,102 @@ func setObjectPositions() {
 		xObj = r1.Intn(randX)
 		yObj = r1.Intn(randY)
 
-		if !arrayToMap[yObj][xObj] {
+		if !arrayToMap[xObj][yObj] {
 			validPosition = true
 			objectivePositionX = xObj
 			objectivePositionY = yObj
 		}
 	}
+
+	println("INICIO: ", playerPositionX, playerPositionY)
+	println("OBJECTIVO: ", objectivePositionX, objectivePositionY)
+}
+
+func checkMapByBFS(xActual, yActual int, imd *imdraw.IMDraw, win *pixelgl.Window) (validMap bool) {
+	queue := list.New()
+	objectivePoint := mapPoint{xPoint: objectivePositionX, yPoint: objectivePositionY}
+
+	validMap = false
+
+	if yActual > 0 && !arrayToMap[xActual][yActual-1] {
+		queue.PushBack(mapPoint{xPoint: xActual, yPoint: yActual - 1})
+	}
+	if xActual > 0 && !arrayToMap[xActual-1][yActual] {
+		queue.PushBack(mapPoint{xPoint: xActual - 1, yPoint: yActual})
+	}
+	if yActual < (fieldDimentionY-2) && !arrayToMap[xActual][yActual+1] {
+		queue.PushBack(mapPoint{xPoint: xActual, yPoint: yActual + 1})
+	}
+	if xActual < (fieldDimentionX-1) && !arrayToMap[xActual+1][yActual] {
+		queue.PushBack(mapPoint{xPoint: xActual + 1, yPoint: yActual})
+	}
+
+	xCurrent := xActual
+	yCurrent := yActual
+
+	for queue.Len() > 0 {
+		// println("size: ", queue.Len())
+		currentPoint := queue.Front()
+
+		xCurrent = currentPoint.Value.(mapPoint).xPoint
+		yCurrent = currentPoint.Value.(mapPoint).yPoint
+
+		println(xCurrent, yCurrent)
+
+		queue.Remove(currentPoint)
+
+		// Check horizontal limit in the map.
+		if !checkLimit(yCurrent, (fieldDimentionY - 2)) {
+			continue
+		}
+
+		// Check vertical limit in the map.
+		if !checkLimit(xCurrent, (fieldDimentionX - 1)) {
+			continue
+		}
+
+		// This check if this point is playable. (true means false, because there's a wall)
+		if arrayToMap[xCurrent][yCurrent] || arrayToCheck[xCurrent][yCurrent] {
+			continue
+		}
+
+		arrayToCheck[xCurrent][yCurrent] = true
+
+		imd.Color = colornames.Yellow
+		px := getWall(xCurrent, yCurrent)
+		imd.Push(px.Min, px.Max)
+		imd.Rectangle(0)
+		imd.Draw(win)
+		win.Update()
+		time.Sleep(10 * time.Millisecond)
+
+		if objectivePoint == currentPoint.Value {
+			validMap = true
+			break
+		}
+
+		if checkLimit(yCurrent-1, (fieldDimentionY-2)) && !arrayToMap[xCurrent][yCurrent-1] && !arrayToCheck[xCurrent][yCurrent-1] {
+			queue.PushBack(mapPoint{xPoint: xCurrent, yPoint: yCurrent - 1})
+		}
+
+		if checkLimit(xCurrent-1, (fieldDimentionX-1)) && !arrayToMap[xCurrent-1][yCurrent] && !arrayToCheck[xCurrent-1][yCurrent] {
+			queue.PushBack(mapPoint{xPoint: xCurrent - 1, yPoint: yCurrent})
+		}
+
+		if checkLimit(yCurrent+1, (fieldDimentionY-2)) && !arrayToMap[xCurrent][yCurrent+1] && !arrayToCheck[xCurrent][yCurrent+1] {
+			queue.PushBack(mapPoint{xPoint: xCurrent, yPoint: yCurrent + 1})
+		}
+
+		if checkLimit(xCurrent+1, (fieldDimentionX-1)) && !arrayToMap[xCurrent+1][yCurrent] && !arrayToCheck[xCurrent+1][yCurrent] {
+			queue.PushBack(mapPoint{xPoint: xCurrent + 1, yPoint: yCurrent})
+		}
+	}
+
+	return
+}
+
+func checkLimit(currentValue, limit int) bool {
+	return currentValue >= 0 && currentValue < limit
 }
 
 func checkMapByDFS(yActual, xActual int, imd *imdraw.IMDraw, win *pixelgl.Window) bool {
@@ -200,7 +299,7 @@ func checkMapByDFS(yActual, xActual int, imd *imdraw.IMDraw, win *pixelgl.Window
 	}
 
 	arrayToCheck[yActual][xActual] = true
-	println(xActual, yActual)
+	// println(xActual, yActual)
 
 	// Check if this point is the point where is the objective.
 	if !(playerPositionX == xActual && playerPositionY == yActual) {
@@ -215,7 +314,7 @@ func checkMapByDFS(yActual, xActual int, imd *imdraw.IMDraw, win *pixelgl.Window
 
 	// Check if this point is the point where is the objective.
 	if objectivePositionX == xActual && objectivePositionY == yActual {
-		println("EXITO")
+		// println("EXITO")
 		return true
 	}
 
