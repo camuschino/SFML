@@ -3,12 +3,10 @@ package utils
 import (
 	"container/list"
 	"fmt"
-	"time"
 
 	"github.com/camuschino/laberth-go/models"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	"golang.org/x/image/colornames"
 )
 
 var (
@@ -87,13 +85,13 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 
 		laberth.ArrayToCheck[xCurrent][yCurrent] = true
 
-		imd.Color = colornames.Yellow
-		px := getWall(xCurrent, yCurrent)
-		imd.Push(px.Min, px.Max)
-		imd.Rectangle(0)
-		imd.Draw(win)
-		win.Update()
-		time.Sleep(20 * time.Millisecond)
+		// imd.Color = colornames.Yellow
+		// px := getWall(xCurrent, yCurrent)
+		// imd.Push(px.Min, px.Max)
+		// imd.Rectangle(0)
+		// imd.Draw(win)
+		// win.Update()
+		// time.Sleep(20 * time.Millisecond)
 
 		if objectivePoint == currentPoint.Value {
 			validMap = true
