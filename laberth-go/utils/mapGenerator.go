@@ -14,9 +14,6 @@ func SetObjectPositions(laberth models.Labyrinth) (player, target models.MapPoin
 	randX := len(laberth.ArrayToMap) - 2
 	randY := len(laberth.ArrayToMap[0]) - 2
 
-	// randX := laberth.FieldDimentionX - 1
-	// randY := laberth.FieldDimentionY - 2
-
 	fmt.Println("size: X", randX)
 	fmt.Println("size: Y", randY)
 
@@ -39,9 +36,7 @@ func SetObjectPositions(laberth models.Labyrinth) (player, target models.MapPoin
 		target.XPoint = r1.Intn(randX)
 		target.YPoint = r1.Intn(randY)
 	}
-	println("INICIO", laberth.ArrayToMap[player.XPoint][player.YPoint])
 	fmt.Println(player)
-	println("OBJECTIVO", laberth.ArrayToMap[target.XPoint][target.YPoint])
 	fmt.Println(target)
 
 	return

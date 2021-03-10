@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"image/color"
+
 	"github.com/camuschino/laberth-go/models"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -22,16 +24,9 @@ func RenderMapAndObjects(laberth models.Labyrinth, player, target models.MapPoin
 		}
 	}
 
-	pyVec := getObjectsToRender(player, laberth)
-	tarVec := getObjectsToRender(target, laberth)
+	getObjectsToRender(imd, player, colornames.Aqua, laberth)
+	getObjectsToRender(imd, target, colornames.Greenyellow, laberth)
 
-	imd.Color = colornames.Aqua
-	imd.Push(pyVec)
-	imd.Circle(float64(laberth.MovementDistance/2), 0)
-
-	imd.Color = colornames.Greenyellow
-	imd.Push(tarVec)
-	imd.Circle(float64(laberth.MovementDistance/2), 0)
 	imd.Draw(win)
 	win.Update()
 }
@@ -43,10 +38,14 @@ func getWall(x, y, sizeField int) (px pixel.Rect) {
 	return
 }
 
-func getObjectsToRender(object models.MapPoint, laberth models.Labyrinth) (objectToRender pixel.Vec) {
+func getObjectsToRender(imd *imdraw.IMDraw, object models.MapPoint, color color.Color, laberth models.Labyrinth) {
 
-	objectToRender.X = float64((object.XPoint * laberth.SizeField) + int(laberth.MovementDistance/2))
-	objectToRender.Y = float64((object.YPoint * laberth.SizeField) + int(laberth.MovementDistance/2))
+	objectToRender := pixel.Vec{
+		X: float64((object.XPoint * laberth.SizeField) + int(laberth.MovementDistance/2)),
+		Y: float64((object.YPoint * laberth.SizeField) + int(laberth.MovementDistance/2)),
+	}
 
-	return
+	imd.Color = color
+	imd.Push(objectToRender)
+	imd.Circle(float64(laberth.MovementDistance/2), 0)
 }
