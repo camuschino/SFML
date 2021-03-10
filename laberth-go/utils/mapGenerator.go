@@ -14,9 +14,6 @@ func SetObjectPositions(laberth models.Labyrinth) (player, target models.MapPoin
 	randX := len(laberth.ArrayToMap) - 2
 	randY := len(laberth.ArrayToMap[0]) - 2
 
-	fmt.Println("size: X", randX)
-	fmt.Println("size: Y", randY)
-
 	s1 := rand.NewSource(time.Now().UnixNano())
 	r1 := rand.New(s1)
 	player.XPoint = r1.Intn(randX)
@@ -48,16 +45,19 @@ func CreateNewMap(xSize, ySize, sizeField int, movementDistance float32) (labert
 	s1 := rand.NewSource(time.Now().UnixNano())
 
 	laberth = models.Labyrinth{
-		FieldDimentionX:  xSize,
-		FieldDimentionY:  ySize,
+		// FieldDimentionX:  xSize,
+		// FieldDimentionY:  ySize,
 		SizeField:        sizeField,
 		MovementDistance: movementDistance,
 	}
 
-	laberth.SetArrays()
+	laberth.SetArrays(xSize, ySize)
 
-	for i := 0; i < laberth.FieldDimentionX-1; i++ {
-		for j := 0; j < laberth.FieldDimentionY-2; j++ {
+	fieldDimentionX := len(laberth.ArrayToMap)
+	fieldDimentionY := len(laberth.ArrayToMap[0])
+
+	for i := 0; i < fieldDimentionX-1; i++ {
+		for j := 0; j < fieldDimentionY-2; j++ {
 			r1 := rand.New(s1)
 
 			if i%2 == 0 && j%2 == 0 {

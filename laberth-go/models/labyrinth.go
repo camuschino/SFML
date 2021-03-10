@@ -2,18 +2,18 @@ package models
 
 // Labyrinth struct
 type Labyrinth struct {
-	FieldDimentionX, FieldDimentionY, SizeField int
-	MovementDistance                            float32
-	ArrayToCheck, ArrayToMap                    [][]bool
+	SizeField                int
+	MovementDistance         float32
+	ArrayToCheck, ArrayToMap [][]bool
 }
 
 // SetArrays func
-func (labert *Labyrinth) SetArrays() {
-	labert.ArrayToCheck = make([][]bool, labert.FieldDimentionY)
-	labert.ArrayToMap = make([][]bool, labert.FieldDimentionY)
+func (labert *Labyrinth) SetArrays(fieldDimentionX, fieldDimentionY int) {
+	labert.ArrayToCheck = make([][]bool, fieldDimentionX)
+	labert.ArrayToMap = make([][]bool, fieldDimentionX)
 
 	for i := range labert.ArrayToCheck {
-		labert.ArrayToMap[i] = make([]bool, labert.FieldDimentionX)
-		labert.ArrayToCheck[i] = make([]bool, labert.FieldDimentionX)
+		labert.ArrayToMap[i] = make([]bool, fieldDimentionY)
+		labert.ArrayToCheck[i] = make([]bool, fieldDimentionY)
 	}
 }

@@ -12,10 +12,12 @@ import (
 
 // RenderMapAndObjects func
 func RenderMapAndObjects(laberth models.Labyrinth, player, target models.MapPoint, imd *imdraw.IMDraw, win *pixelgl.Window) {
+	fieldDimentionX := len(laberth.ArrayToMap)
+	fieldDimentionY := len(laberth.ArrayToMap[0])
 
 	imd.Color = colornames.Antiquewhite
-	for i := 0; i < laberth.FieldDimentionX-1; i++ {
-		for j := 0; j < laberth.FieldDimentionY-2; j++ {
+	for i := 0; i < fieldDimentionX-1; i++ {
+		for j := 0; j < fieldDimentionY-2; j++ {
 			if laberth.ArrayToMap[i][j] {
 				px := getWall(i, j, laberth.SizeField)
 				imd.Push(px.Min, px.Max)

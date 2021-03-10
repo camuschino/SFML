@@ -28,23 +28,24 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 
 	validMap = false
 
+	fieldDimentionX := len(laberth.ArrayToMap)
+	fieldDimentionY := len(laberth.ArrayToMap[0])
+
 	if player.YPoint > 0 && !laberth.ArrayToMap[player.XPoint][player.YPoint-1] {
 		queue.PushBack(models.MapPoint{XPoint: player.XPoint, YPoint: player.YPoint - 1})
 	}
 	if player.XPoint > 0 && !laberth.ArrayToMap[player.XPoint-1][player.YPoint] {
 		queue.PushBack(models.MapPoint{XPoint: player.XPoint - 1, YPoint: player.YPoint})
 	}
-	if player.YPoint < (laberth.FieldDimentionY-2) && !laberth.ArrayToMap[player.XPoint][player.YPoint+1] {
+	if player.YPoint < (fieldDimentionY-2) && !laberth.ArrayToMap[player.XPoint][player.YPoint+1] {
 		queue.PushBack(models.MapPoint{XPoint: player.XPoint, YPoint: player.YPoint + 1})
 	}
-	if player.XPoint < (laberth.FieldDimentionX-1) && !laberth.ArrayToMap[player.XPoint+1][player.YPoint] {
+	if player.XPoint < (fieldDimentionX-1) && !laberth.ArrayToMap[player.XPoint+1][player.YPoint] {
 		queue.PushBack(models.MapPoint{XPoint: player.XPoint + 1, YPoint: player.YPoint})
 	}
 
 	xCurrent := 0
 	yCurrent := 0
-
-	time.Sleep(1000 * time.Millisecond)
 
 	for queue.Len() > 0 {
 		currentPoint := queue.Front()
@@ -57,12 +58,12 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 		queue.Remove(currentPoint)
 
 		// Check horizontal limit in the map.
-		if !checkLimit(yCurrent, (laberth.FieldDimentionY - 2)) {
+		if !checkLimit(yCurrent, (fieldDimentionY - 2)) {
 			continue
 		}
 
 		// Check vertical limit in the map.
-		if !checkLimit(xCurrent, (laberth.FieldDimentionX - 1)) {
+		if !checkLimit(xCurrent, (fieldDimentionX - 1)) {
 			continue
 		}
 
@@ -93,19 +94,19 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 		}
 		time.Sleep(10 * time.Millisecond)
 
-		if checkLimit(yCurrent-1, (laberth.FieldDimentionY-2)) && !laberth.ArrayToMap[xCurrent][yCurrent-1] && !laberth.ArrayToCheck[xCurrent][yCurrent-1] {
+		if checkLimit(yCurrent-1, (fieldDimentionY-2)) && !laberth.ArrayToMap[xCurrent][yCurrent-1] && !laberth.ArrayToCheck[xCurrent][yCurrent-1] {
 			queue.PushBack(models.MapPoint{XPoint: xCurrent, YPoint: yCurrent - 1})
 		}
 
-		if checkLimit(xCurrent-1, (laberth.FieldDimentionX-1)) && !laberth.ArrayToMap[xCurrent-1][yCurrent] && !laberth.ArrayToCheck[xCurrent-1][yCurrent] {
+		if checkLimit(xCurrent-1, (fieldDimentionX-1)) && !laberth.ArrayToMap[xCurrent-1][yCurrent] && !laberth.ArrayToCheck[xCurrent-1][yCurrent] {
 			queue.PushBack(models.MapPoint{XPoint: xCurrent - 1, YPoint: yCurrent})
 		}
 
-		if checkLimit(yCurrent+1, (laberth.FieldDimentionY-2)) && !laberth.ArrayToMap[xCurrent][yCurrent+1] && !laberth.ArrayToCheck[xCurrent][yCurrent+1] {
+		if checkLimit(yCurrent+1, (fieldDimentionY-2)) && !laberth.ArrayToMap[xCurrent][yCurrent+1] && !laberth.ArrayToCheck[xCurrent][yCurrent+1] {
 			queue.PushBack(models.MapPoint{XPoint: xCurrent, YPoint: yCurrent + 1})
 		}
 
-		if checkLimit(xCurrent+1, (laberth.FieldDimentionX-1)) && !laberth.ArrayToMap[xCurrent+1][yCurrent] && !laberth.ArrayToCheck[xCurrent+1][yCurrent] {
+		if checkLimit(xCurrent+1, (fieldDimentionX-1)) && !laberth.ArrayToMap[xCurrent+1][yCurrent] && !laberth.ArrayToCheck[xCurrent+1][yCurrent] {
 			queue.PushBack(models.MapPoint{XPoint: xCurrent + 1, YPoint: yCurrent})
 		}
 	}
@@ -120,12 +121,12 @@ func checkLimit(currentValue, limit int) bool {
 // func checkMapByDFS(yActual, xActual int, imd *imdraw.IMDraw, win *pixelgl.Window) bool {
 
 // 	// Check vertical limit in the map.
-// 	if yActual >= (laberth.FieldDimentionX-1) || yActual < 0 {
+// 	if yActual >= (fieldDimentionX-1) || yActual < 0 {
 // 		return false
 // 	}
 
 // 	// Check horizontal limit in the map.
-// 	if xActual >= (laberth.FieldDimentionY-2) || xActual < 0 {
+// 	if xActual >= (fieldDimentionY-2) || xActual < 0 {
 // 		return false
 // 	}
 

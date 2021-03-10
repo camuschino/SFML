@@ -9,16 +9,10 @@ import (
 )
 
 const (
-	windowDimentionX, windowDimentionY, sizeBlock int     = 500, 500, 50 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
-	fieldDimentionX, fieldDimentionY              int     = ((windowDimentionX / sizeBlock) * 2) + 1, ((windowDimentionY / sizeBlock) * 2) + 2
+	windowDimentionX, windowDimentionY, sizeBlock int     = 500, 500, 10 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
+	fieldDimentionX, fieldDimentionY              int     = ((windowDimentionX / sizeBlock) * 2) + 1, ((windowDimentionY / sizeBlock) * 2) + 1
 	sizeField                                     int     = sizeBlock / 2
 	movementDistance                              float32 = float32(sizeField)
-)
-
-var (
-	arrayToCheck, arrayToMap                                                                [fieldDimentionX][fieldDimentionY]bool
-	playerPositionX, playerPositionY, objectivePositionX, objectivePositionY                int
-	mIsMovingUp, mIsMovingRight, mIsMovingLeft, mIsMovingDown, isMapChecked, isMapGenerated bool
 )
 
 func run() {
