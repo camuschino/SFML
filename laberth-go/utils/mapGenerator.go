@@ -45,8 +45,6 @@ func CreateNewMap(xSize, ySize, sizeField int, movementDistance float32) (labert
 	s1 := rand.NewSource(time.Now().UnixNano())
 
 	laberth = models.Labyrinth{
-		// FieldDimentionX:  xSize,
-		// FieldDimentionY:  ySize,
 		SizeField:        sizeField,
 		MovementDistance: movementDistance,
 	}
@@ -56,8 +54,8 @@ func CreateNewMap(xSize, ySize, sizeField int, movementDistance float32) (labert
 	fieldDimentionX := len(laberth.ArrayToMap)
 	fieldDimentionY := len(laberth.ArrayToMap[0])
 
-	for i := 0; i < fieldDimentionX-1; i++ {
-		for j := 0; j < fieldDimentionY-2; j++ {
+	for i := 0; i < fieldDimentionX; i++ {
+		for j := 0; j < fieldDimentionY; j++ {
 			r1 := rand.New(s1)
 
 			if i%2 == 0 && j%2 == 0 {

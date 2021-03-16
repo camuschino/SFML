@@ -16,8 +16,8 @@ func RenderMapAndObjects(laberth models.Labyrinth, player, target models.MapPoin
 	fieldDimentionY := len(laberth.ArrayToMap[0])
 
 	imd.Color = colornames.Antiquewhite
-	for i := 0; i < fieldDimentionX-1; i++ {
-		for j := 0; j < fieldDimentionY-2; j++ {
+	for i := 0; i < fieldDimentionX; i++ {
+		for j := 0; j < fieldDimentionY; j++ {
 			if laberth.ArrayToMap[i][j] {
 				px := getWall(i, j, laberth.SizeField)
 				imd.Push(px.Min, px.Max)
