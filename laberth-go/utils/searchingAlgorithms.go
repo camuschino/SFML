@@ -17,7 +17,7 @@ func ValidateMap(algorithm string, player, target models.MapPoint, laberth model
 	case "BFS":
 		result = checkMapByBFS(player, target, laberth, imd, win)
 	case "DFS":
-		// result = checkMapByDFS()
+		result = checkMapByDFS(player, target, laberth, imd, win)
 	}
 	return
 }
@@ -118,63 +118,71 @@ func checkLimit(currentValue, limit int) bool {
 	return currentValue >= 0 && currentValue < limit
 }
 
-// func checkMapByDFS(yActual, xActual int, imd *imdraw.IMDraw, win *pixelgl.Window) bool {
+func checkMapByDFS(actualPoint, target models.MapPoint, laberth models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) bool {
 
-// 	// Check vertical limit in the map.
-// 	if yActual >= (fieldDimentionX-1) || yActual < 0 {
-// 		return false
-// 	}
+	fieldDimentionX := len(laberth.ArrayToMap)
+	fieldDimentionY := len(laberth.ArrayToMap[0])
 
-// 	// Check horizontal limit in the map.
-// 	if xActual >= (fieldDimentionY-2) || xActual < 0 {
-// 		return false
-// 	}
+	yActual := actualPoint.YPoint
+	xActual := actualPoint.XPoint
 
-// 	// This check if this point is playable.
-// 	if laberth.ArrayToMap[yActual][xActual] {
-// 		return false
-// 	}
+	// Check vertical limit in the map.
+	if !checkLimit(xActual, fieldDimentionX) {
+		return false
+	}
 
-// 	// Check if this position is already previously checked.
-// 	if laberth.ArrayToCheck[yActual][xActual] {
-// 		return false
-// 	}
+	// Check horizontal limit in the map.
+	if !checkLimit(yActual, fieldDimentionY) {
+		return false
+	}
 
-// 	laberth.ArrayToCheck[yActual][xActual] = true
-// 	// println(xActual, yActual)
+	// This check if this point is playable.
+	if laberth.ArrayToMap[xActual][yActual] {
+		return false
+	}
 
-// 	// Check if this point is the point where is the objective.
-// 	if !(playerPositionX == yActual && playerPositionY == xActual) {
-// 		imd.Color = colornames.Yellow
-// 		px := getWall(yActual, xActual)
-// 		imd.Push(px.Min, px.Max)
-// 		imd.Rectangle(0)
-// 		imd.Draw(win)
-// 		win.Update()
-// 		time.Sleep(20 * time.Millisecond)
-// 	}
+	// Check if this position is already previously checked.
+	if laberth.ArrayToCheck[xActual][yActual] {
+		return false
+	}
 
-// 	// Check if this point is the point where is the objective.
-// 	if objectivePositionY == xActual && objectivePositionX == yActual {
-// 		// println("EXITO")
-// 		return true
-// 	}
+	laberth.ArrayToCheck[xActual][yActual] = true
 
-// 	if checkMapByDFS(yActual-1, xActual, imd, win) {
-// 		return true
-// 	}
+	if target == actualPoint {
+		imd.Color = colornames.Red
+		px := getWall(xActual, yActual, laberth.SizeField)
+		imd.Push(px.Min, px.Max)
+		imd.Rectangle(0)
+		imd.Draw(win)
+		win.Update()
+		time.Sleep(1000 * time.Millisecond)
+		return true
+	}
 
-// 	if checkMapByDFS(yActual, xActual-1, imd, win) {
-// 		return true
-// 	}
+	imd.Color = colornames.Yellow
+	px := getWall(xActual, yActual, laberth.SizeField)
+	imd.Push(px.Min, px.Max)
+	imd.Rectangle(0)
+	imd.Draw(win)
+	win.Update()
 
-// 	if checkMapByDFS(yActual+1, xActual, imd, win) {
-// 		return true
-// 	}
+	time.Sleep(10 * time.Millisecond)
 
-// 	if checkMapByDFS(yActual, xActual+1, imd, win) {
-// 		return true
-// 	}
+	if checkMapByDFS(models.MapPoint{XPoint: xActual - 1, YPoint: yActual}, target, laberth, imd, win) {
+		return true
+	}
 
-// 	return false
-// }
+	if checkMapByDFS(models.MapPoint{XPoint: xActual, YPoint: yActual - 1}, target, laberth, imd, win) {
+		return true
+	}
+
+	if checkMapByDFS(models.MapPoint{XPoint: xActual + 1, YPoint: yActual}, target, laberth, imd, win) {
+		return true
+	}
+
+	if checkMapByDFS(models.MapPoint{XPoint: xActual, YPoint: yActual + 1}, target, laberth, imd, win) {
+		return true
+	}
+
+	return false
+}
