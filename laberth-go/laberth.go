@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	windowDimentionX, windowDimentionY, sizeBlock int     = 500, 500, 10 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
+	windowDimentionX, windowDimentionY, sizeBlock int     = 500, 500, 20 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
 	fieldDimentionX, fieldDimentionY              int     = ((windowDimentionX / sizeBlock) * 2) + 1, ((windowDimentionY / sizeBlock) * 2) + 1
 	sizeField                                     int     = sizeBlock / 2
 	movementDistance                              float32 = float32(sizeField)
@@ -55,71 +55,6 @@ func run() {
 		win.Update()
 	}
 }
-
-func checkLimit(currentValue, limit int) bool {
-	return currentValue >= 0 && currentValue < limit
-}
-
-// func checkMapByDFS(yActual, xActual int, imd *imdraw.IMDraw, win *pixelgl.Window) bool {
-
-// 	// Check vertical limit in the map.
-// 	if yActual >= (fieldDimentionX-1) || yActual < 0 {
-// 		return false
-// 	}
-
-// 	// Check horizontal limit in the map.
-// 	if xActual >= (fieldDimentionY-2) || xActual < 0 {
-// 		return false
-// 	}
-
-// 	// This check if this point is playable.
-// 	if arrayToMap[yActual][xActual] {
-// 		return false
-// 	}
-
-// 	// Check if this position is already previously checked.
-// 	if arrayToCheck[yActual][xActual] {
-// 		return false
-// 	}
-
-// 	arrayToCheck[yActual][xActual] = true
-// 	// println(xActual, yActual)
-
-// 	// Check if this point is the point where is the objective.
-// 	if !(playerPositionX == yActual && playerPositionY == xActual) {
-// 		imd.Color = colornames.Yellow
-// 		px := getWall(yActual, xActual)
-// 		imd.Push(px.Min, px.Max)
-// 		imd.Rectangle(0)
-// 		imd.Draw(win)
-// 		win.Update()
-// 		time.Sleep(20 * time.Millisecond)
-// 	}
-
-// 	// Check if this point is the point where is the objective.
-// 	if objectivePositionY == xActual && objectivePositionX == yActual {
-// 		// println("EXITO")
-// 		return true
-// 	}
-
-// 	if checkMapByDFS(yActual-1, xActual, imd, win) {
-// 		return true
-// 	}
-
-// 	if checkMapByDFS(yActual, xActual-1, imd, win) {
-// 		return true
-// 	}
-
-// 	if checkMapByDFS(yActual+1, xActual, imd, win) {
-// 		return true
-// 	}
-
-// 	if checkMapByDFS(yActual, xActual+1, imd, win) {
-// 		return true
-// 	}
-
-// 	return false
-// }
 
 func main() {
 	pixelgl.Run(run)
