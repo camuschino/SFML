@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	windowDimentionX, windowDimentionY, sizeBlock int     = 500, 500, 10 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
+	windowDimentionX, windowDimentionY, sizeBlock int     = 500, 500, 50 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
 	fieldDimentionX, fieldDimentionY              int     = ((windowDimentionX / sizeBlock) * 2) + 1, ((windowDimentionY / sizeBlock) * 2) + 1
 	sizeField                                     int     = sizeBlock / 2
 	movementDistance                              float32 = float32(sizeField)
