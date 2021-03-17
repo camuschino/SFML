@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -33,8 +32,6 @@ func SetObjectPositions(laberth models.Labyrinth) (player, target models.MapPoin
 		target.XPoint = r1.Intn(randX)
 		target.YPoint = r1.Intn(randY)
 	}
-	fmt.Println(player)
-	fmt.Println(target)
 
 	return
 }

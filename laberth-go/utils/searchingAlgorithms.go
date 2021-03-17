@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"container/list"
 	"time"
 
 	"github.com/camuschino/laberth-go/models"
@@ -17,14 +16,13 @@ func ValidateMap(algorithm string, player, target models.MapPoint, laberth model
 	case "BFS":
 		result = checkMapByBFS(player, target, laberth, imd, win)
 	case "DFS":
-		result = checkMapByDFS(player, target, laberth, imd, win)
+		result = checkMapByBFS(player, target, laberth, imd, win)
 	}
 	return
 }
 
 func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (validMap bool) {
-	queue := list.New()
-	laberth.ArrayToCheck[player.XPoint][player.YPoint] = true
+	slice := []models.MapPoint{}
 
 	validMap = false
 
@@ -32,30 +30,28 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 	fieldDimentionY := len(laberth.ArrayToMap[0])
 
 	if player.YPoint > 0 && !laberth.ArrayToMap[player.XPoint][player.YPoint-1] {
-		queue.PushBack(models.MapPoint{XPoint: player.XPoint, YPoint: player.YPoint - 1})
+		slice = append(slice, models.MapPoint{XPoint: player.XPoint, YPoint: player.YPoint - 1})
 	}
 	if player.XPoint > 0 && !laberth.ArrayToMap[player.XPoint-1][player.YPoint] {
-		queue.PushBack(models.MapPoint{XPoint: player.XPoint - 1, YPoint: player.YPoint})
+		slice = append(slice, models.MapPoint{XPoint: player.XPoint - 1, YPoint: player.YPoint})
 	}
 	if player.YPoint < (fieldDimentionY-2) && !laberth.ArrayToMap[player.XPoint][player.YPoint+1] {
-		queue.PushBack(models.MapPoint{XPoint: player.XPoint, YPoint: player.YPoint + 1})
+		slice = append(slice, models.MapPoint{XPoint: player.XPoint, YPoint: player.YPoint + 1})
 	}
 	if player.XPoint < (fieldDimentionX-1) && !laberth.ArrayToMap[player.XPoint+1][player.YPoint] {
-		queue.PushBack(models.MapPoint{XPoint: player.XPoint + 1, YPoint: player.YPoint})
+		slice = append(slice, models.MapPoint{XPoint: player.XPoint + 1, YPoint: player.YPoint})
 	}
 
 	xCurrent := 0
 	yCurrent := 0
 
-	for queue.Len() > 0 {
-		currentPoint := queue.Front()
+	for len(slice) > 0 {
+		first := slice[0]
 
-		xCurrent = currentPoint.Value.(models.MapPoint).XPoint
-		yCurrent = currentPoint.Value.(models.MapPoint).YPoint
+		xCurrent = first.XPoint
+		yCurrent = first.YPoint
 
-		println(xCurrent, yCurrent)
-
-		queue.Remove(currentPoint)
+		slice = slice[1:]
 
 		// Check horizontal limit in the map.
 		if !checkLimit(yCurrent, (fieldDimentionY - 2)) {
@@ -74,7 +70,7 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 
 		laberth.ArrayToCheck[xCurrent][yCurrent] = true
 
-		if target == currentPoint.Value {
+		if target == first {
 			imd.Color = colornames.Red
 			px := getWall(xCurrent, yCurrent, laberth.SizeField)
 			imd.Push(px.Min, px.Max)
@@ -94,20 +90,28 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 		}
 		time.Sleep(10 * time.Millisecond)
 
-		if checkLimit(yCurrent-1, (fieldDimentionY-2)) && !laberth.ArrayToMap[xCurrent][yCurrent-1] && !laberth.ArrayToCheck[xCurrent][yCurrent-1] {
-			queue.PushBack(models.MapPoint{XPoint: xCurrent, YPoint: yCurrent - 1})
+		downPoint := models.MapPoint{XPoint: xCurrent, YPoint: yCurrent - 1}
+
+		if checkLimit(yCurrent-1, (fieldDimentionY)) && checkMapPoint(downPoint, laberth) {
+			slice = append(slice, downPoint)
 		}
 
-		if checkLimit(xCurrent-1, (fieldDimentionX-1)) && !laberth.ArrayToMap[xCurrent-1][yCurrent] && !laberth.ArrayToCheck[xCurrent-1][yCurrent] {
-			queue.PushBack(models.MapPoint{XPoint: xCurrent - 1, YPoint: yCurrent})
+		leftPoint := models.MapPoint{XPoint: xCurrent - 1, YPoint: yCurrent}
+
+		if checkLimit(xCurrent-1, (fieldDimentionX)) && checkMapPoint(leftPoint, laberth) {
+			slice = append(slice, leftPoint)
 		}
 
-		if checkLimit(yCurrent+1, (fieldDimentionY-2)) && !laberth.ArrayToMap[xCurrent][yCurrent+1] && !laberth.ArrayToCheck[xCurrent][yCurrent+1] {
-			queue.PushBack(models.MapPoint{XPoint: xCurrent, YPoint: yCurrent + 1})
+		upPoint := models.MapPoint{XPoint: xCurrent, YPoint: yCurrent + 1}
+
+		if checkLimit(yCurrent+1, (fieldDimentionY)) && checkMapPoint(upPoint, laberth) {
+			slice = append(slice, upPoint)
 		}
 
-		if checkLimit(xCurrent+1, (fieldDimentionX-1)) && !laberth.ArrayToMap[xCurrent+1][yCurrent] && !laberth.ArrayToCheck[xCurrent+1][yCurrent] {
-			queue.PushBack(models.MapPoint{XPoint: xCurrent + 1, YPoint: yCurrent})
+		rightPoint := models.MapPoint{XPoint: xCurrent + 1, YPoint: yCurrent}
+
+		if checkLimit(xCurrent+1, (fieldDimentionX)) && checkMapPoint(rightPoint, laberth) {
+			slice = append(slice, rightPoint)
 		}
 	}
 
@@ -116,6 +120,11 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 
 func checkLimit(currentValue, limit int) bool {
 	return currentValue >= 0 && currentValue < limit
+}
+
+func checkMapPoint(point models.MapPoint, laberth models.Labyrinth) (isValid bool) {
+	isValid = !laberth.ArrayToMap[point.XPoint][point.YPoint] && !laberth.ArrayToCheck[point.XPoint][point.YPoint]
+	return
 }
 
 func checkMapByDFS(actualPoint, target models.MapPoint, laberth models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) bool {
