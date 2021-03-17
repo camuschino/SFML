@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	windowDimentionX, windowDimentionY, sizeBlock int     = 500, 500, 20 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
+	windowDimentionX, windowDimentionY, sizeBlock int     = 500, 500, 10 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
 	fieldDimentionX, fieldDimentionY              int     = ((windowDimentionX / sizeBlock) * 2) + 1, ((windowDimentionY / sizeBlock) * 2) + 1
 	sizeField                                     int     = sizeBlock / 2
 	movementDistance                              float32 = float32(sizeField)
@@ -34,7 +34,9 @@ func run() {
 	player, target := utils.SetObjectPositions(laberth)
 	utils.RenderMapAndObjects(laberth, player, target, imd, win)
 
-	valid := utils.ValidateMap("BFS", player, target, laberth, imd, win)
+	algorithm := "BFS"
+
+	valid := utils.ValidateMap(algorithm, player, target, laberth, imd, win)
 	println(valid)
 
 	for true {
@@ -45,7 +47,13 @@ func run() {
 		imd.Clear()
 		utils.RenderMapAndObjects(laberth, player, target, imd, win)
 
-		valid := utils.ValidateMap("BFS", player, target, laberth, imd, win)
+		if algorithm == "BFS" {
+			algorithm = "DFS"
+		} else {
+			algorithm = "BFS"
+		}
+
+		valid := utils.ValidateMap(algorithm, player, target, laberth, imd, win)
 		println(valid)
 	}
 
