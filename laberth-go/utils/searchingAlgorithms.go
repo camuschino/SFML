@@ -117,7 +117,7 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 }
 
 func checkLimit(currentValue, limit int) bool {
-	return currentValue > 0 && currentValue < limit-1
+	return currentValue >= 0 && currentValue < limit-1
 }
 
 func checkMapPoint(point models.MapPoint, laberth models.Labyrinth) bool {
