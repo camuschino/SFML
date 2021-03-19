@@ -55,16 +55,6 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 		first := slice[0]
 		slice = slice[1:]
 
-		// Check vertical limit in the map.
-		if !checkLimit(first.YPoint, fieldDimentionY) {
-			continue
-		}
-
-		// Check horizontal limit in the map.
-		if !checkLimit(first.XPoint, fieldDimentionX) {
-			continue
-		}
-
 		// This check if this point is playable. (true means false, because there's a wall)
 		if !checkMapPoint(first, laberth) {
 			continue
