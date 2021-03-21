@@ -73,25 +73,23 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 
 		time.Sleep(10 * time.Millisecond)
 
-		leftPoint = first
+		upPoint, downPoint, leftPoint, rightPoint := first, first, first, first
+
 		leftPoint.YPoint--
 		if checkLimit(leftPoint.YPoint, fieldDimentionY) && checkMapPoint(leftPoint, laberth) {
 			slice = append(slice, leftPoint)
 		}
 
-		downPoint = first
 		downPoint.XPoint--
 		if checkLimit(downPoint.XPoint, fieldDimentionX) && checkMapPoint(downPoint, laberth) {
 			slice = append(slice, downPoint)
 		}
 
-		upPoint = first
 		upPoint.YPoint++
 		if checkLimit(upPoint.YPoint, fieldDimentionY) && checkMapPoint(upPoint, laberth) {
 			slice = append(slice, upPoint)
 		}
 
-		rightPoint = first
 		rightPoint.XPoint++
 		if checkLimit(rightPoint.XPoint, fieldDimentionX) && checkMapPoint(rightPoint, laberth) {
 			slice = append(slice, rightPoint)
