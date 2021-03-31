@@ -9,11 +9,11 @@ type Labyrinth struct {
 
 // SetArrays func
 func (labert *Labyrinth) SetArrays(fieldDimentionX, fieldDimentionY int) {
-	labert.ArrayToCheck = make([][]bool, fieldDimentionX)
-	labert.ArrayToMap = make([][]bool, fieldDimentionX)
+	labert.ArrayToCheck = make([][]bool, fieldDimentionX, fieldDimentionX)
+	labert.ArrayToMap = make([][]bool, fieldDimentionX, fieldDimentionX)
 
 	for i := range labert.ArrayToCheck {
-		labert.ArrayToMap[i] = make([]bool, fieldDimentionY)
-		labert.ArrayToCheck[i] = make([]bool, fieldDimentionY)
+		labert.ArrayToMap[i] = make([]bool, fieldDimentionY, fieldDimentionY)
+		labert.ArrayToCheck[i] = make([]bool, fieldDimentionY, fieldDimentionY)
 	}
 }
