@@ -31,21 +31,21 @@ func run() {
 
 	laberth := utils.CreateNewMap(fieldDimentionX, fieldDimentionY, sizeField, movementDistance)
 
-	player, target := utils.SetObjectPositions(laberth)
-	utils.RenderMapAndObjects(laberth, player, target, imd, win)
+	player, target := utils.SetObjectPositions(&laberth)
+	utils.RenderMapAndObjects(&laberth, player, target, imd, win)
 
 	algorithm := "BFS"
 
-	valid := utils.ValidateMap(algorithm, player, target, laberth, imd, win)
+	valid := utils.ValidateMap(algorithm, player, target, &laberth, imd, win)
 	println(valid)
 
 	for true {
 		laberth := utils.CreateNewMap(fieldDimentionX, fieldDimentionY, sizeField, movementDistance)
 
-		player, target := utils.SetObjectPositions(laberth)
+		player, target := utils.SetObjectPositions(&laberth)
 		win.Clear(colornames.Black)
 		imd.Clear()
-		utils.RenderMapAndObjects(laberth, player, target, imd, win)
+		utils.RenderMapAndObjects(&laberth, player, target, imd, win)
 
 		if algorithm == "BFS" {
 			algorithm = "DFS"
@@ -53,7 +53,7 @@ func run() {
 			algorithm = "BFS"
 		}
 
-		valid := utils.ValidateMap(algorithm, player, target, laberth, imd, win)
+		valid := utils.ValidateMap(algorithm, player, target, &laberth, imd, win)
 		println(valid)
 	}
 

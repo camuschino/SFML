@@ -11,7 +11,7 @@ import (
 )
 
 // RenderMapAndObjects func
-func RenderMapAndObjects(laberth models.Labyrinth, player, target models.MapPoint, imd *imdraw.IMDraw, win *pixelgl.Window) {
+func RenderMapAndObjects(laberth *models.Labyrinth, player, target models.MapPoint, imd *imdraw.IMDraw, win *pixelgl.Window) {
 	fieldDimentionX := len(laberth.ArrayToMap)
 	fieldDimentionY := len(laberth.ArrayToMap[0])
 
@@ -40,7 +40,7 @@ func getWall(x, y, sizeField int) (px pixel.Rect) {
 	return
 }
 
-func getObjectsToRender(imd *imdraw.IMDraw, object models.MapPoint, color color.Color, laberth models.Labyrinth) {
+func getObjectsToRender(imd *imdraw.IMDraw, object models.MapPoint, color color.Color, laberth *models.Labyrinth) {
 
 	objectToRender := pixel.Vec{
 		X: float64((object.XPoint * laberth.SizeField) + int(laberth.MovementDistance/2)),

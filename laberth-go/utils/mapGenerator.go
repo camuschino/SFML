@@ -8,7 +8,7 @@ import (
 )
 
 // SetObjectPositions func
-func SetObjectPositions(laberth models.Labyrinth) (player, target models.MapPoint) {
+func SetObjectPositions(laberth *models.Labyrinth) (player, target models.MapPoint) {
 
 	randX := len(laberth.ArrayToMap) - 2
 	randY := len(laberth.ArrayToMap[0]) - 2

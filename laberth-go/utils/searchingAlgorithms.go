@@ -10,7 +10,7 @@ import (
 )
 
 // ValidateMap function which works fine
-func ValidateMap(algorithm string, player, target models.MapPoint, laberth models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (result bool) {
+func ValidateMap(algorithm string, player, target models.MapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (result bool) {
 
 	switch algorithm {
 	case "BFS":
@@ -21,7 +21,7 @@ func ValidateMap(algorithm string, player, target models.MapPoint, laberth model
 	return
 }
 
-func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (validMap bool) {
+func checkMapByBFS(player, target models.MapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (validMap bool) {
 	slice := []models.MapPoint{}
 
 	validMap = false
@@ -99,58 +99,58 @@ func checkMapByBFS(player, target models.MapPoint, laberth models.Labyrinth, imd
 	return
 }
 
-func checkMapByDFS(actualPoint, target models.MapPoint, laberth models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) bool {
+func checkMapByDFS(player, target models.MapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) bool {
 
 	fieldDimentionX := len(laberth.ArrayToMap)
 	fieldDimentionY := len(laberth.ArrayToMap[0])
 
 	// Check vertical limit in the map.
-	if !checkLimit(actualPoint.XPoint, fieldDimentionX) {
+	if !checkLimit(player.XPoint, fieldDimentionX) {
 		return false
 	}
 
 	// Check horizontal limit in the map.
-	if !checkLimit(actualPoint.YPoint, fieldDimentionY) {
+	if !checkLimit(player.YPoint, fieldDimentionY) {
 		return false
 	}
 
 	// This check if this point is playable, AND
 	// Check if this position is already previously checked.
-	if !checkMapPoint(actualPoint, laberth) {
+	if !checkMapPoint(player, laberth) {
 		return false
 	}
 
-	laberth.ArrayToCheck[actualPoint.XPoint][actualPoint.YPoint] = true
+	laberth.ArrayToCheck[player.XPoint][player.YPoint] = true
 
-	if target == actualPoint {
-		renderingStep(actualPoint, laberth.SizeField, colornames.Blue, imd, win)
+	if target == player {
+		renderingStep(player, laberth.SizeField, colornames.Blue, imd, win)
 		time.Sleep(1000 * time.Millisecond)
 		return true
 	}
 
-	renderingStep(actualPoint, laberth.SizeField, colornames.Greenyellow, imd, win)
+	renderingStep(player, laberth.SizeField, colornames.Greenyellow, imd, win)
 
 	time.Sleep(10 * time.Millisecond)
 
-	leftPoint := actualPoint
+	leftPoint := player
 	leftPoint.XPoint--
 	if checkMapByDFS(leftPoint, target, laberth, imd, win) {
 		return true
 	}
 
-	downPoint := actualPoint
+	downPoint := player
 	downPoint.YPoint--
 	if checkMapByDFS(downPoint, target, laberth, imd, win) {
 		return true
 	}
 
-	rightPoint := actualPoint
+	rightPoint := player
 	rightPoint.XPoint++
 	if checkMapByDFS(rightPoint, target, laberth, imd, win) {
 		return true
 	}
 
-	upPoint := actualPoint
+	upPoint := player
 	upPoint.YPoint++
 	if checkMapByDFS(upPoint, target, laberth, imd, win) {
 		return true
@@ -163,14 +163,14 @@ func checkLimit(currentValue, limit int) bool {
 	return currentValue >= 0 && currentValue < limit-1
 }
 
-func checkMapPoint(point models.MapPoint, laberth models.Labyrinth) bool {
+func checkMapPoint(point models.MapPoint, laberth *models.Labyrinth) bool {
 	return !checkPointIsWall(point, laberth) && !checkPointIsAlreadyTested(point, laberth)
 }
 
-func checkPointIsWall(point models.MapPoint, laberth models.Labyrinth) bool {
+func checkPointIsWall(point models.MapPoint, laberth *models.Labyrinth) bool {
 	return laberth.ArrayToMap[point.XPoint][point.YPoint]
 }
 
-func checkPointIsAlreadyTested(point models.MapPoint, laberth models.Labyrinth) bool {
+func checkPointIsAlreadyTested(point models.MapPoint, laberth *models.Labyrinth) bool {
 	return laberth.ArrayToCheck[point.XPoint][point.YPoint]
 }
