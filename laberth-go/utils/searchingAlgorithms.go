@@ -9,19 +9,32 @@ import (
 	"golang.org/x/image/colornames"
 )
 
+type LabSolver interface {
+	checkMapByBFS(player, target models.MapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) bool
+	checkMapByDFS(player, target models.MapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) bool
+}
+
+type AlgorithmsSearching struct {
+	numberOfRounds int
+}
+
 // ValidateMap function which works fine
 func ValidateMap(algorithm string, player, target models.MapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (result bool) {
+	var seeker LabSolver
+	algh := AlgorithmsSearching{0}
+	seeker = algh
 
 	switch algorithm {
 	case "BFS":
-		result = checkMapByBFS(player, target, laberth, imd, win)
+		// result = checkMapByBFS(player, target, laberth, imd, win)
+		result = seeker.checkMapByBFS(player, target, laberth, imd, win)
 	case "DFS":
-		result = checkMapByDFS(player, target, laberth, imd, win)
+		result = seeker.checkMapByDFS(player, target, laberth, imd, win)
 	}
 	return
 }
 
-func checkMapByBFS(player, target models.MapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (validMap bool) {
+func (algh AlgorithmsSearching) checkMapByBFS(player, target models.MapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (validMap bool) {
 	slice := []models.MapPoint{}
 
 	validMap = false
@@ -99,7 +112,7 @@ func checkMapByBFS(player, target models.MapPoint, laberth *models.Labyrinth, im
 	return
 }
 
-func checkMapByDFS(player, target models.MapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) bool {
+func (algh AlgorithmsSearching) checkMapByDFS(player, target models.MapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) bool {
 
 	fieldDimentionX := len(laberth.ArrayToMap)
 	fieldDimentionY := len(laberth.ArrayToMap[0])
@@ -134,25 +147,25 @@ func checkMapByDFS(player, target models.MapPoint, laberth *models.Labyrinth, im
 
 	leftPoint := player
 	leftPoint.XPoint--
-	if checkMapByDFS(leftPoint, target, laberth, imd, win) {
+	if algh.checkMapByDFS(leftPoint, target, laberth, imd, win) {
 		return true
 	}
 
 	downPoint := player
 	downPoint.YPoint--
-	if checkMapByDFS(downPoint, target, laberth, imd, win) {
+	if algh.checkMapByDFS(downPoint, target, laberth, imd, win) {
 		return true
 	}
 
 	rightPoint := player
 	rightPoint.XPoint++
-	if checkMapByDFS(rightPoint, target, laberth, imd, win) {
+	if algh.checkMapByDFS(rightPoint, target, laberth, imd, win) {
 		return true
 	}
 
 	upPoint := player
 	upPoint.YPoint++
-	if checkMapByDFS(upPoint, target, laberth, imd, win) {
+	if algh.checkMapByDFS(upPoint, target, laberth, imd, win) {
 		return true
 	}
 
