@@ -11,7 +11,7 @@ import (
 )
 
 // RenderMapAndObjects func
-func RenderMapAndObjects(laberth *models.Labyrinth, player, target models.MapPoint, imd *imdraw.IMDraw, win *pixelgl.Window) {
+func RenderMapAndObjects(laberth *models.Labyrinth, player, target models.MapPoint, targets []models.Target, imd *imdraw.IMDraw, win *pixelgl.Window) {
 	fieldDimentionX := len(laberth.ArrayToMap)
 	fieldDimentionY := len(laberth.ArrayToMap[0])
 
@@ -28,6 +28,17 @@ func RenderMapAndObjects(laberth *models.Labyrinth, player, target models.MapPoi
 
 	getObjectsToRender(imd, player, colornames.Aqua, laberth)
 	getObjectsToRender(imd, target, colornames.Red, laberth)
+
+	for len(targets) > 0 {
+		first := targets[0]
+		targets = targets[1:]
+		switch first.(type) {
+			case models.Coin:
+				getObjectsToRender(imd, first.GetMapPoint(), colornames.Blue, laberth)
+			case models.Enemy:
+				getObjectsToRender(imd, first.GetMapPoint(), colornames.Greenyellow, laberth)
+		}
+	}
 
 	imd.Draw(win)
 	win.Update()

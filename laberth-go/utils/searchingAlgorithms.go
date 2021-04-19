@@ -21,12 +21,11 @@ type AlgorithmsSearching struct {
 // ValidateMap function which works fine
 func ValidateMap(algorithm string, player, target models.MapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (result bool) {
 	var seeker LabSolver
-	algh := AlgorithmsSearching{0}
+	algh := AlgorithmsSearching{}
 	seeker = algh
 
 	switch algorithm {
 	case "BFS":
-		// result = checkMapByBFS(player, target, laberth, imd, win)
 		result = seeker.checkMapByBFS(player, target, laberth, imd, win)
 	case "DFS":
 		result = seeker.checkMapByDFS(player, target, laberth, imd, win)

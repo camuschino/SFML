@@ -7,30 +7,60 @@ import (
 	"github.com/camuschino/laberth-go/models"
 )
 
-// SetObjectPositions func
-func SetObjectPositions(laberth *models.Labyrinth) (player, target models.MapPoint) {
+func generateRandInt(axisValue int) int {
+	s1 := rand.NewSource(time.Now().UnixNano())
+	r1 := rand.New(s1)
+
+	return r1.Intn(axisValue)
+}
+
+func generateRandMapPoint(randX, randY int) (mapPoint models.MapPoint) {
+
+	mapPoint.XPoint = generateRandInt(randX)
+	mapPoint.YPoint = generateRandInt(randY)
+
+	return
+}
+
+func generateValidMapPoint(laberth *models.Labyrinth) (mapPoint models.MapPoint) {
 
 	randX := len(laberth.ArrayToMap) - 2
 	randY := len(laberth.ArrayToMap[0]) - 2
 
-	s1 := rand.NewSource(time.Now().UnixNano())
-	r1 := rand.New(s1)
-	player.XPoint = r1.Intn(randX)
-	player.YPoint = r1.Intn(randY)
+	mapPoint = generateRandMapPoint(randX, randY)
 
-	for laberth.ArrayToMap[player.XPoint][player.YPoint] {
-		r1 = rand.New(s1)
-		player.XPoint = r1.Intn(randX)
-		player.YPoint = r1.Intn(randY)
+	for laberth.ArrayToMap[mapPoint.XPoint][mapPoint.YPoint] {
+		mapPoint = generateRandMapPoint(randX, randY)
 	}
 
-	target.XPoint = r1.Intn(randX)
-	target.YPoint = r1.Intn(randY)
+	return
+}
 
-	for laberth.ArrayToMap[target.XPoint][target.YPoint] {
-		r1 = rand.New(s1)
-		target.XPoint = r1.Intn(randX)
-		target.YPoint = r1.Intn(randY)
+// SetObjectPositions func
+func SetObjectPositions(laberth *models.Labyrinth) (player, target models.MapPoint, targets []models.Target) {
+
+	player = generateValidMapPoint(laberth)
+	target = generateValidMapPoint(laberth)
+
+	for i := 0; i < 5;i++ {
+		var newTarget models.Target
+
+		switch generateRandInt(2) {
+		case 0:
+			newEnemy := models.Enemy{
+				MapPointEnemy: generateValidMapPoint(laberth),
+				Score: 20,
+			}
+			newTarget = newEnemy
+		case 1:
+			newCoin := models.Coin{
+				MapPointCoin: generateValidMapPoint(laberth),
+				Score: 10,
+			}
+			newTarget = newCoin
+		}
+
+		targets = append(targets, newTarget)
 	}
 
 	return
