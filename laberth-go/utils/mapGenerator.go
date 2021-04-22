@@ -46,18 +46,18 @@ func SetObjectPositions(laberth *models.Labyrinth) (player, target models.MapPoi
 		var newTarget models.Target
 
 		switch generateRandInt(2) {
-		case 0:
-			newEnemy := models.Enemy{
-				MapPointEnemy: generateValidMapPoint(laberth),
-				Score: 20,
-			}
-			newTarget = newEnemy
-		case 1:
-			newCoin := models.Coin{
-				MapPointCoin: generateValidMapPoint(laberth),
-				Score: 10,
-			}
-			newTarget = newCoin
+			case 0:
+				newEnemy := models.Enemy{
+					MapPointEnemy: generateValidMapPoint(laberth),
+					Score: 20,
+				}
+				newTarget = newEnemy
+			case 1:
+				newCoin := models.Coin{
+					MapPointCoin: generateValidMapPoint(laberth),
+					Score: 10,
+				}
+				newTarget = newCoin
 		}
 
 		targets = append(targets, newTarget)
