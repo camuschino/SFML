@@ -24,7 +24,7 @@ func (c Enemy) GetMapPoint() MapPoint {
 }
 
 func (c Coin) Collision(playerScore int) int {
-	return playerScore - c.Score
+	return playerScore + c.Score
 }
 
 func (e Enemy) Collision(playerScore int) int {

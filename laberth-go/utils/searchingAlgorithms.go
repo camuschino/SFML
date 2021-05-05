@@ -25,10 +25,10 @@ func ValidateMap(algorithm string, player, target models.MapPoint, laberth *mode
 	seeker = algh
 
 	switch algorithm {
-	case "BFS":
-		result = seeker.checkMapByBFS(player, target, laberth, imd, win)
-	case "DFS":
-		result = seeker.checkMapByDFS(player, target, laberth, imd, win)
+		case "BFS":
+			result = seeker.checkMapByBFS(player, target, laberth, imd, win)
+		case "DFS":
+			result = seeker.checkMapByDFS(player, target, laberth, imd, win)
 	}
 	return
 }
