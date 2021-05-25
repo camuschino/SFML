@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	windowDimentionX, windowDimentionY, sizeBlock int     = 300, 300, 10 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
+	windowDimentionX, windowDimentionY, sizeBlock int     = 600, 600, 20 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
 	fieldDimentionX, fieldDimentionY              int     = ((windowDimentionX / sizeBlock) * 2) + 1, ((windowDimentionY / sizeBlock) * 2) + 1
 	sizeField                                     int     = sizeBlock / 2
 	movementDistance                              float32 = float32(sizeField)
@@ -31,21 +31,21 @@ func run() {
 
 	laberth := utils.CreateNewMap(fieldDimentionX, fieldDimentionY, sizeField, movementDistance)
 
-	player, target, targets := utils.SetObjectPositions(&laberth)
-	utils.RenderMapAndObjects(&laberth, player, target, targets, imd, win)
+	player, target := utils.SetObjectPositions(&laberth)
+	utils.RenderMapAndObjects(&laberth, player, target, imd, win)
 
 	algorithm := "BFS"
 
 	valid := utils.ValidateMap(algorithm, player, target, &laberth, imd, win)
 	println(valid)
 
-	for true {
+	for {
 		laberth := utils.CreateNewMap(fieldDimentionX, fieldDimentionY, sizeField, movementDistance)
 
-		player, target, targets := utils.SetObjectPositions(&laberth)
+		player, target := utils.SetObjectPositions(&laberth)
 		win.Clear(colornames.Black)
 		imd.Clear()
-		utils.RenderMapAndObjects(&laberth, player, target, targets, imd, win)
+		utils.RenderMapAndObjects(&laberth, player, target, imd, win)
 
 		if algorithm == "BFS" {
 			algorithm = "DFS"
@@ -57,11 +57,11 @@ func run() {
 		println(valid)
 	}
 
-	for !win.Closed() {
-		win.Clear(colornames.Black)
-		imd.Draw(win)
-		win.Update()
-	}
+	// for !win.Closed() {
+	// 	win.Clear(colornames.Black)
+	// 	imd.Draw(win)
+	// 	win.Update()
+	// }
 }
 
 func main() {
