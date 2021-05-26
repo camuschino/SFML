@@ -5,16 +5,16 @@ type Labyrinth struct {
 	SizeField        int
 	MovementDistance float32
 	ArrayToCheck     [][]bool
-	ArrayToMap       [][]MapPoint
+	ArrayToMap       [][]MapPointable
 }
 
 // SetArrays func
 func (labert *Labyrinth) SetArrays(fieldDimentionX, fieldDimentionY int) {
 	labert.ArrayToCheck = make([][]bool, fieldDimentionX)
-	labert.ArrayToMap = make([][]MapPoint, fieldDimentionX)
+	labert.ArrayToMap = make([][]MapPointable, fieldDimentionX)
 
 	for i := range labert.ArrayToCheck {
-		labert.ArrayToMap[i] = make([]MapPoint, fieldDimentionY)
 		labert.ArrayToCheck[i] = make([]bool, fieldDimentionY)
+		labert.ArrayToMap[i] = make([]MapPointable, fieldDimentionY)
 	}
 }

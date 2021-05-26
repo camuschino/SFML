@@ -1,41 +1,31 @@
 package models
 
-type MapPoint struct {
-	TargetInPoint Target
-	WallInPoint   bool
-}
-
 type Target interface {
 	Collision(playerScore int) int
-	GetMapPoint() XYMapPoint
+	GetMapPoint() Coords
+	SetMapPoint(mapPoint Coords) Target
+	GetScore() int
+	SetScore(score int) Target
 }
 
-type XYMapPoint struct {
+type MapPointable interface {
+	Step() MapPointable
+}
+
+type MapPoint struct {
+	TargetInPoint Target
+}
+
+type MapBool bool
+
+func (mapBool MapBool) Step() MapPointable {
+	return mapBool
+}
+
+func (mapPoint MapPoint) Step() MapPointable {
+	return mapPoint
+}
+
+type Coords struct {
 	XPoint, YPoint int
-}
-
-type Coin struct {
-	Score        int
-	MapPointCoin XYMapPoint
-}
-
-type Enemy struct {
-	Score         int
-	MapPointEnemy XYMapPoint
-}
-
-func (c Coin) GetMapPoint() XYMapPoint {
-	return c.MapPointCoin
-}
-
-func (e Enemy) GetMapPoint() XYMapPoint {
-	return e.MapPointEnemy
-}
-
-func (c Coin) Collision(playerScore int) int {
-	return playerScore + c.Score
-}
-
-func (e Enemy) Collision(playerScore int) int {
-	return playerScore - e.Score
 }
