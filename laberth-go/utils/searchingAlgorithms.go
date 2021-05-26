@@ -10,8 +10,8 @@ import (
 )
 
 type LabSolver interface {
-	checkMapByBFS(player, target models.XYMapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) int
-	checkMapByDFS(player, target models.XYMapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window, score int) bool
+	checkMapByBFS(player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) int
+	checkMapByDFS(player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window, score int) models.MapBool
 }
 
 type AlgorithmsSearching struct {
@@ -19,7 +19,7 @@ type AlgorithmsSearching struct {
 }
 
 // ValidateMap function which works fine
-func ValidateMap(algorithm string, player, target models.XYMapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (score int) {
+func ValidateMap(algorithm string, player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (score int) {
 	var seeker LabSolver
 	algh := AlgorithmsSearching{}
 	seeker = algh
@@ -36,8 +36,8 @@ func ValidateMap(algorithm string, player, target models.XYMapPoint, laberth *mo
 	return
 }
 
-func (algh AlgorithmsSearching) checkMapByBFS(player, target models.XYMapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (score int) {
-	slice := []models.XYMapPoint{}
+func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (score int) {
+	slice := []models.Coords{}
 
 	fieldDimentionX := len(laberth.ArrayToMap)
 	fieldDimentionY := len(laberth.ArrayToMap[0])
@@ -64,8 +64,6 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.XYMapPoint, 
 		slice = append(slice, rightPoint)
 	}
 
-	var targetInPoint models.MapPoint
-
 	for len(slice) > 0 {
 		first := slice[0]
 		slice = slice[1:]
@@ -83,10 +81,17 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.XYMapPoint, 
 			return score
 		}
 
-		if targetInPoint = laberth.ArrayToMap[first.XPoint][first.YPoint]; targetInPoint.TargetInPoint != nil {
-			score = targetInPoint.TargetInPoint.Collision(score)
+		// mapPointable := laberth.ArrayToMap[first.XPoint][first.YPoint]
+
+		switch mapPointable := laberth.ArrayToMap[first.XPoint][first.YPoint].(type) {
+		case models.MapPoint:
+			score = mapPointable.TargetInPoint.Collision(score)
 			println(score)
 		}
+
+		// if targetInPoint = laberth.ArrayToMap[first.XPoint][first.YPoint].(models.MapPoint); targetInPoint.TargetInPoint != nil {
+
+		// }
 
 		renderingStep(first, laberth.SizeField, colornames.Greenyellow, imd, win)
 
@@ -118,7 +123,7 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.XYMapPoint, 
 	return 0
 }
 
-func (algh AlgorithmsSearching) checkMapByDFS(player, target models.XYMapPoint, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window, score int) bool {
+func (algh AlgorithmsSearching) checkMapByDFS(player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window, score int) models.MapBool {
 
 	fieldDimentionX := len(laberth.ArrayToMap)
 	fieldDimentionY := len(laberth.ArrayToMap[0])
@@ -141,8 +146,9 @@ func (algh AlgorithmsSearching) checkMapByDFS(player, target models.XYMapPoint, 
 
 	laberth.ArrayToCheck[player.XPoint][player.YPoint] = true
 
-	if targetInPoint := laberth.ArrayToMap[player.XPoint][player.YPoint]; targetInPoint.TargetInPoint != nil {
-		score = targetInPoint.TargetInPoint.Collision(score)
+	switch mapPointable := laberth.ArrayToMap[player.XPoint][player.YPoint].(type) {
+	case models.MapPoint:
+		score = mapPointable.TargetInPoint.Collision(score)
 		println(score)
 	}
 
@@ -184,15 +190,20 @@ func checkLimit(currentValue, limit int) bool {
 	return currentValue >= 0 && currentValue < limit-1
 }
 
-func checkMapPoint(point models.XYMapPoint, laberth *models.Labyrinth) bool {
+func checkMapPoint(point models.Coords, laberth *models.Labyrinth) bool {
 	return !checkPointIsWall(point, laberth) && !checkPointIsAlreadyTested(point, laberth)
 }
 
-func checkPointIsWall(point models.XYMapPoint, laberth *models.Labyrinth) bool {
-	mapPointIsWall := laberth.ArrayToMap[point.XPoint][point.YPoint].WallInPoint
-	return mapPointIsWall
+func checkPointIsWall(point models.Coords, laberth *models.Labyrinth) bool {
+
+	switch mapPointale := laberth.ArrayToMap[point.XPoint][point.YPoint].(type) {
+	case models.MapBool:
+		return bool(mapPointale)
+	default:
+		return false
+	}
 }
 
-func checkPointIsAlreadyTested(point models.XYMapPoint, laberth *models.Labyrinth) bool {
+func checkPointIsAlreadyTested(point models.Coords, laberth *models.Labyrinth) bool {
 	return laberth.ArrayToCheck[point.XPoint][point.YPoint]
 }

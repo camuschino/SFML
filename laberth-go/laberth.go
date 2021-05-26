@@ -56,12 +56,6 @@ func run() {
 		valid := utils.ValidateMap(algorithm, player, target, &laberth, imd, win)
 		println(valid)
 	}
-
-	// for !win.Closed() {
-	// 	win.Clear(colornames.Black)
-	// 	imd.Draw(win)
-	// 	win.Update()
-	// }
 }
 
 func main() {

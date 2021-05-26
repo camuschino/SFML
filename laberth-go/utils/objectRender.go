@@ -11,27 +11,29 @@ import (
 )
 
 // RenderMapAndObjects func
-func RenderMapAndObjects(laberth *models.Labyrinth, player, target models.XYMapPoint, imd *imdraw.IMDraw, win *pixelgl.Window) {
+func RenderMapAndObjects(laberth *models.Labyrinth, player, target models.Coords, imd *imdraw.IMDraw, win *pixelgl.Window) {
 	fieldDimentionX := len(laberth.ArrayToMap)
 	fieldDimentionY := len(laberth.ArrayToMap[0])
 
 	imd.Color = colornames.Antiquewhite
 	for i := 0; i < fieldDimentionX; i++ {
 		for j := 0; j < fieldDimentionY; j++ {
-			mapPoint := laberth.ArrayToMap[i][j]
-			if mapPoint.WallInPoint {
-				px := getWall(i, j, laberth.SizeField)
-				imd.Color = color.White
-				imd.Push(px.Min, px.Max)
-				imd.Rectangle(0)
-			}
 
-			if mapPoint.TargetInPoint != nil {
-				switch mapPoint.TargetInPoint.(type) {
+			switch mapPointable := laberth.ArrayToMap[i][j].(type) {
+			case models.MapBool:
+				if mapPointable {
+					px := getWall(i, j, laberth.SizeField)
+					imd.Color = colornames.White
+					imd.Push(px.Min, px.Max)
+					imd.Rectangle(0)
+				}
+			case models.MapPoint:
+				target := mapPointable.TargetInPoint
+				switch target.(type) {
 				case models.Coin:
-					getObjectsToRender(imd, mapPoint.TargetInPoint.GetMapPoint(), colornames.Blue, laberth)
+					getObjectsToRender(imd, target.GetMapPoint(), colornames.Blue, laberth)
 				case models.Enemy:
-					getObjectsToRender(imd, mapPoint.TargetInPoint.GetMapPoint(), colornames.Greenyellow, laberth)
+					getObjectsToRender(imd, target.GetMapPoint(), colornames.Greenyellow, laberth)
 				}
 			}
 		}
@@ -51,7 +53,7 @@ func getWall(x, y, sizeField int) (px pixel.Rect) {
 	return
 }
 
-func getObjectsToRender(imd *imdraw.IMDraw, object models.XYMapPoint, color color.Color, laberth *models.Labyrinth) {
+func getObjectsToRender(imd *imdraw.IMDraw, object models.Coords, color color.Color, laberth *models.Labyrinth) {
 
 	objectToRender := pixel.Vec{
 		X: float64((object.XPoint * laberth.SizeField) + int(laberth.MovementDistance/2)),
@@ -63,7 +65,7 @@ func getObjectsToRender(imd *imdraw.IMDraw, object models.XYMapPoint, color colo
 	imd.Circle(float64(laberth.MovementDistance/2), 0)
 }
 
-func renderingStep(point models.XYMapPoint, labertSizeField int, color color.Color, imd *imdraw.IMDraw, win *pixelgl.Window) {
+func renderingStep(point models.Coords, labertSizeField int, color color.Color, imd *imdraw.IMDraw, win *pixelgl.Window) {
 	imd.Color = color
 	px := getWall(point.XPoint, point.YPoint, labertSizeField)
 	imd.Push(px.Min, px.Max)
