@@ -95,7 +95,7 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, labe
 
 		renderingStep(first, laberth.SizeField, colornames.Greenyellow, imd, win)
 
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(1 * time.Millisecond)
 
 		upPoint, downPoint, leftPoint, rightPoint := first, first, first, first
 
@@ -160,7 +160,7 @@ func (algh AlgorithmsSearching) checkMapByDFS(player, target models.Coords, labe
 
 	renderingStep(player, laberth.SizeField, colornames.Greenyellow, imd, win)
 
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(1 * time.Millisecond)
 
 	leftPoint := player
 	leftPoint.XPoint--

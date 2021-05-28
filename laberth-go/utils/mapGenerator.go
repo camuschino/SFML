@@ -14,12 +14,11 @@ func generateRandInt(randLimit int) int {
 	return r1.Intn(randLimit)
 }
 
-func generateRandMapPoint(randX, randY int) (mapPoint models.Coords) {
-
-	mapPoint.XPoint = generateRandInt(randX)
-	mapPoint.YPoint = generateRandInt(randY)
-
-	return
+func generateRandMapPoint(randX, randY int) models.Coords {
+	return models.Coords{
+		XPoint: generateRandInt(randX),
+		YPoint: generateRandInt(randY),
+	}
 }
 
 func generateValidMapPoint(laberth *models.Labyrinth) (mapPoint models.Coords) {
@@ -86,23 +85,17 @@ func CreateNewMap(xSize, ySize, sizeField int, movementDistance float32) (labert
 
 	fieldDimentionX := len(laberth.ArrayToMap)
 	fieldDimentionY := len(laberth.ArrayToMap[0])
+	var newMapBool models.MapBool
+	r1 := rand.New(s1)
 
 	for i := 0; i < fieldDimentionX; i++ {
 		for j := 0; j < fieldDimentionY; j++ {
-			r1 := rand.New(s1)
-
-			if i%2 == 0 && j%2 == 0 {
-				var newMapBool models.MapBool = false
-				laberth.ArrayToMap[i][j] = newMapBool
+			if (i%2 == 0 && j%2 == 0) || r1.Intn(2) == 0 {
+				newMapBool = false
 			} else {
-				if r1.Intn(2) == 0 {
-					var newMapBool models.MapBool = false
-					laberth.ArrayToMap[i][j] = newMapBool
-				} else {
-					var newMapBool models.MapBool = true
-					laberth.ArrayToMap[i][j] = newMapBool
-				}
+				newMapBool = true
 			}
+			laberth.ArrayToMap[i][j] = newMapBool
 		}
 	}
 
