@@ -8,23 +8,13 @@ type Target interface {
 	SetScore(score int) Target
 }
 
-type MapPointable interface {
-	Step() MapPointable
-}
+type MapPointable interface{}
 
 type MapPoint struct {
 	TargetInPoint Target
 }
 
 type MapBool bool
-
-func (mapBool MapBool) Step() MapPointable {
-	return mapBool
-}
-
-func (mapPoint MapPoint) Step() MapPointable {
-	return mapPoint
-}
 
 type Coords struct {
 	XPoint, YPoint int

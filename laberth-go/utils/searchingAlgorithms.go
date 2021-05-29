@@ -9,6 +9,11 @@ import (
 	"golang.org/x/image/colornames"
 )
 
+var (
+	target    models.Coords
+	sizeField int
+)
+
 type LabSolver interface {
 	checkMapByBFS(player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) int
 	checkMapByDFS(player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window, score int) models.MapBool
@@ -19,10 +24,13 @@ type AlgorithmsSearching struct {
 }
 
 // ValidateMap function which works fine
-func ValidateMap(algorithm string, player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (score int) {
+func ValidateMap(algorithm string, player, targetOriginal models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window, sizeFieldOriginal int) (score int) {
 	var seeker LabSolver
 	algh := AlgorithmsSearching{}
 	seeker = algh
+
+	target = targetOriginal
+	sizeField = sizeFieldOriginal
 
 	switch algorithm {
 	case "BFS":
@@ -85,6 +93,30 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, labe
 		case models.MapPoint:
 			score = mapPointable.TargetInPoint.Collision(score)
 			println(score)
+		}
+
+		if win.JustPressed(pixelgl.KeyUp) && !bool(laberth.ArrayToMap[target.XPoint][target.YPoint+1].(models.MapBool)) {
+			getObjectsToRender(imd, target, colornames.Black, laberth)
+			target.YPoint += sizeField
+			getObjectsToRender(imd, target, colornames.Red, laberth)
+		}
+
+		if win.JustPressed(pixelgl.KeyDown) && !bool(laberth.ArrayToMap[target.XPoint][target.YPoint-1].(models.MapBool)) {
+			getObjectsToRender(imd, target, colornames.Black, laberth)
+			target.YPoint -= sizeField
+			getObjectsToRender(imd, target, colornames.Red, laberth)
+		}
+
+		if win.JustPressed(pixelgl.KeyRight) && !bool(laberth.ArrayToMap[target.XPoint-1][target.YPoint].(models.MapBool)) {
+			getObjectsToRender(imd, target, colornames.Black, laberth)
+			target.XPoint += sizeField
+			getObjectsToRender(imd, target, colornames.Red, laberth)
+		}
+
+		if win.JustPressed(pixelgl.KeyLeft) && !bool(laberth.ArrayToMap[target.XPoint+1][target.YPoint].(models.MapBool)) {
+			getObjectsToRender(imd, target, colornames.Black, laberth)
+			target.XPoint -= sizeField
+			getObjectsToRender(imd, target, colornames.Red, laberth)
 		}
 
 		renderingStep(first, laberth.SizeField, colornames.Greenyellow, imd, win)
@@ -154,7 +186,7 @@ func (algh AlgorithmsSearching) checkMapByDFS(player, target models.Coords, labe
 
 	renderingStep(player, laberth.SizeField, colornames.Greenyellow, imd, win)
 
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 
 	leftPoint := player
 	leftPoint.XPoint--

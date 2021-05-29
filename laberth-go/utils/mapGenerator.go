@@ -44,17 +44,19 @@ func generateValidMapPoint(laberth *models.Labyrinth) (mapPoint models.Coords) {
 }
 
 func getNewTarget(mapPoint models.Coords, newTarget models.Target) models.MapPointable {
-	var t models.MapPoint
+	var score int
 
 	switch newTarget.(type) {
 	case models.Enemy:
-		t.TargetInPoint = newTarget.SetScore(20).SetMapPoint(mapPoint)
+		score = 20
 	case models.Coin:
-		t.TargetInPoint = newTarget.SetScore(10).SetMapPoint(mapPoint)
 	default:
-		t.TargetInPoint = newTarget.SetScore(10).SetMapPoint(mapPoint)
+		score = 10
 	}
-	return t
+
+	return models.MapPoint{
+		TargetInPoint: newTarget.SetScore(score).SetMapPoint(mapPoint),
+	}
 }
 
 // SetObjectPositions func
