@@ -81,17 +81,11 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, labe
 			return score
 		}
 
-		// mapPointable := laberth.ArrayToMap[first.XPoint][first.YPoint]
-
 		switch mapPointable := laberth.ArrayToMap[first.XPoint][first.YPoint].(type) {
 		case models.MapPoint:
 			score = mapPointable.TargetInPoint.Collision(score)
 			println(score)
 		}
-
-		// if targetInPoint = laberth.ArrayToMap[first.XPoint][first.YPoint].(models.MapPoint); targetInPoint.TargetInPoint != nil {
-
-		// }
 
 		renderingStep(first, laberth.SizeField, colornames.Greenyellow, imd, win)
 

@@ -26,13 +26,18 @@ func generateValidMapPoint(laberth *models.Labyrinth) (mapPoint models.Coords) {
 	randX := len(laberth.ArrayToMap) - 2
 	randY := len(laberth.ArrayToMap[0]) - 2
 
-	mapPoint = generateRandMapPoint(randX, randY)
-
-	mapPointable := laberth.ArrayToMap[mapPoint.XPoint][mapPoint.YPoint]
-
-	for mapPointable.(models.MapBool) {
+	for {
 		mapPoint = generateRandMapPoint(randX, randY)
-		mapPointable = laberth.ArrayToMap[mapPoint.XPoint][mapPoint.YPoint].(models.MapBool)
+		switch mapPointable := laberth.ArrayToMap[mapPoint.XPoint][mapPoint.YPoint].(type) {
+		case models.MapBool:
+			if mapPointable {
+				continue
+			}
+		case models.MapPointable:
+		default:
+			continue
+		}
+		break
 	}
 
 	return
@@ -57,9 +62,10 @@ func SetObjectPositions(laberth *models.Labyrinth) (player, target models.Coords
 
 	player = generateValidMapPoint(laberth)
 	target = generateValidMapPoint(laberth)
+	var mapPoint models.Coords
 
 	for i := 0; i < 10; i++ {
-		mapPoint := generateValidMapPoint(laberth)
+		mapPoint = generateValidMapPoint(laberth)
 		switch generateRandInt(2) {
 		case 0:
 			laberth.ArrayToMap[mapPoint.XPoint][mapPoint.YPoint] = getNewTarget(mapPoint, models.Enemy{})
