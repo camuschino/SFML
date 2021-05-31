@@ -33,13 +33,14 @@ func ValidateMap(algorithm string, player, targetOriginal models.Coords, laberth
 	sizeField = sizeFieldOriginal
 
 	switch algorithm {
-	case "BFS":
-		score = seeker.checkMapByBFS(player, target, laberth, imd, win)
-		algh.numberOfRounds = algh.numberOfRounds + score
 	case "DFS":
-		seeker.checkMapByDFS(player, target, laberth, imd, win, 0)
+		seeker.checkMapByBFS(player, target, laberth, imd, win)
 		// algh.numberOfRounds = algh.numberOfRounds + score
 		return 0
+	case "BFS":
+	default:
+		score = seeker.checkMapByBFS(player, target, laberth, imd, win)
+		algh.numberOfRounds = algh.numberOfRounds + score
 	}
 	return
 }
@@ -53,22 +54,22 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, labe
 	upPoint, downPoint, leftPoint, rightPoint := player, player, player, player
 
 	downPoint.YPoint--
-	if checkLimit(downPoint.YPoint, fieldDimentionY) && !checkPointIsWall(downPoint, laberth) {
+	if CheckLimit(downPoint.YPoint, fieldDimentionY) && !CheckPointIsWall(downPoint, laberth) {
 		slice = append(slice, downPoint)
 	}
 
 	leftPoint.XPoint--
-	if checkLimit(leftPoint.XPoint, fieldDimentionX) && !checkPointIsWall(leftPoint, laberth) {
+	if CheckLimit(leftPoint.XPoint, fieldDimentionX) && !CheckPointIsWall(leftPoint, laberth) {
 		slice = append(slice, leftPoint)
 	}
 
 	upPoint.YPoint++
-	if checkLimit(upPoint.YPoint, fieldDimentionY) && !checkPointIsWall(upPoint, laberth) {
+	if CheckLimit(upPoint.YPoint, fieldDimentionY) && !CheckPointIsWall(upPoint, laberth) {
 		slice = append(slice, upPoint)
 	}
 
 	rightPoint.XPoint++
-	if checkLimit(rightPoint.XPoint, fieldDimentionX) && !checkPointIsWall(rightPoint, laberth) {
+	if CheckLimit(rightPoint.XPoint, fieldDimentionX) && !CheckPointIsWall(rightPoint, laberth) {
 		slice = append(slice, rightPoint)
 	}
 
@@ -77,7 +78,7 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, labe
 		slice = slice[1:]
 
 		// This check if this point is playable. (true means false, because there's a wall)
-		if !checkMapPoint(first, laberth) {
+		if !CheckMapPoint(first, laberth) {
 			continue
 		}
 
@@ -95,30 +96,6 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, labe
 			println(score)
 		}
 
-		if win.JustPressed(pixelgl.KeyUp) && !bool(laberth.ArrayToMap[target.XPoint][target.YPoint+1].(models.MapBool)) {
-			getObjectsToRender(imd, target, colornames.Black, laberth)
-			target.YPoint += sizeField
-			getObjectsToRender(imd, target, colornames.Red, laberth)
-		}
-
-		if win.JustPressed(pixelgl.KeyDown) && !bool(laberth.ArrayToMap[target.XPoint][target.YPoint-1].(models.MapBool)) {
-			getObjectsToRender(imd, target, colornames.Black, laberth)
-			target.YPoint -= sizeField
-			getObjectsToRender(imd, target, colornames.Red, laberth)
-		}
-
-		if win.JustPressed(pixelgl.KeyRight) && !bool(laberth.ArrayToMap[target.XPoint-1][target.YPoint].(models.MapBool)) {
-			getObjectsToRender(imd, target, colornames.Black, laberth)
-			target.XPoint += sizeField
-			getObjectsToRender(imd, target, colornames.Red, laberth)
-		}
-
-		if win.JustPressed(pixelgl.KeyLeft) && !bool(laberth.ArrayToMap[target.XPoint+1][target.YPoint].(models.MapBool)) {
-			getObjectsToRender(imd, target, colornames.Black, laberth)
-			target.XPoint -= sizeField
-			getObjectsToRender(imd, target, colornames.Red, laberth)
-		}
-
 		renderingStep(first, laberth.SizeField, colornames.Greenyellow, imd, win)
 
 		time.Sleep(1 * time.Millisecond)
@@ -126,22 +103,22 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, labe
 		upPoint, downPoint, leftPoint, rightPoint := first, first, first, first
 
 		leftPoint.YPoint--
-		if checkLimit(leftPoint.YPoint, fieldDimentionY) && checkMapPoint(leftPoint, laberth) {
+		if CheckLimit(leftPoint.YPoint, fieldDimentionY) && CheckMapPoint(leftPoint, laberth) {
 			slice = append(slice, leftPoint)
 		}
 
 		downPoint.XPoint--
-		if checkLimit(downPoint.XPoint, fieldDimentionX) && checkMapPoint(downPoint, laberth) {
+		if CheckLimit(downPoint.XPoint, fieldDimentionX) && CheckMapPoint(downPoint, laberth) {
 			slice = append(slice, downPoint)
 		}
 
 		upPoint.YPoint++
-		if checkLimit(upPoint.YPoint, fieldDimentionY) && checkMapPoint(upPoint, laberth) {
+		if CheckLimit(upPoint.YPoint, fieldDimentionY) && CheckMapPoint(upPoint, laberth) {
 			slice = append(slice, upPoint)
 		}
 
 		rightPoint.XPoint++
-		if checkLimit(rightPoint.XPoint, fieldDimentionX) && checkMapPoint(rightPoint, laberth) {
+		if CheckLimit(rightPoint.XPoint, fieldDimentionX) && CheckMapPoint(rightPoint, laberth) {
 			slice = append(slice, rightPoint)
 		}
 	}
@@ -155,18 +132,18 @@ func (algh AlgorithmsSearching) checkMapByDFS(player, target models.Coords, labe
 	fieldDimentionY := len(laberth.ArrayToMap[0])
 
 	// Check vertical limit in the map.
-	if !checkLimit(player.XPoint, fieldDimentionX) {
+	if !CheckLimit(player.XPoint, fieldDimentionX) {
 		return false
 	}
 
 	// Check horizontal limit in the map.
-	if !checkLimit(player.YPoint, fieldDimentionY) {
+	if !CheckLimit(player.YPoint, fieldDimentionY) {
 		return false
 	}
 
 	// This check if this point is playable, AND
 	// Check if this position is already previously checked.
-	if !checkMapPoint(player, laberth) {
+	if !CheckMapPoint(player, laberth) {
 		return false
 	}
 
@@ -212,15 +189,15 @@ func (algh AlgorithmsSearching) checkMapByDFS(player, target models.Coords, labe
 	return algh.checkMapByDFS(upPoint, target, laberth, imd, win, score)
 }
 
-func checkLimit(currentValue, limit int) bool {
+func CheckLimit(currentValue, limit int) bool {
 	return currentValue >= 0 && currentValue < limit-1
 }
 
-func checkMapPoint(point models.Coords, laberth *models.Labyrinth) bool {
-	return !checkPointIsWall(point, laberth) && !checkPointIsAlreadyTested(point, laberth)
+func CheckMapPoint(point models.Coords, laberth *models.Labyrinth) bool {
+	return !CheckPointIsWall(point, laberth) && !CheckPointIsAlreadyTested(point, laberth)
 }
 
-func checkPointIsWall(point models.Coords, laberth *models.Labyrinth) bool {
+func CheckPointIsWall(point models.Coords, laberth *models.Labyrinth) bool {
 
 	switch mapPointale := laberth.ArrayToMap[point.XPoint][point.YPoint].(type) {
 	case models.MapBool:
@@ -230,6 +207,6 @@ func checkPointIsWall(point models.Coords, laberth *models.Labyrinth) bool {
 	}
 }
 
-func checkPointIsAlreadyTested(point models.Coords, laberth *models.Labyrinth) bool {
+func CheckPointIsAlreadyTested(point models.Coords, laberth *models.Labyrinth) bool {
 	return laberth.ArrayToCheck[point.XPoint][point.YPoint]
 }

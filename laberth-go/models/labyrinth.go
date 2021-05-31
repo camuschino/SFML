@@ -9,12 +9,12 @@ type Labyrinth struct {
 }
 
 // SetArrays func
-func (labert *Labyrinth) SetArrays(fieldDimentionX, fieldDimentionY int) {
-	labert.ArrayToCheck = make([][]bool, fieldDimentionX)
-	labert.ArrayToMap = make([][]MapPointable, fieldDimentionX)
+func (laberth *Labyrinth) CreateNewEmptyMap(fieldDimentionX, fieldDimentionY int) {
+	laberth.ArrayToCheck = make([][]bool, fieldDimentionX)
+	laberth.ArrayToMap = make([][]MapPointable, fieldDimentionX)
 
-	for i := range labert.ArrayToCheck {
-		labert.ArrayToCheck[i] = make([]bool, fieldDimentionY)
-		labert.ArrayToMap[i] = make([]MapPointable, fieldDimentionY)
+	for i := range laberth.ArrayToCheck {
+		laberth.ArrayToCheck[i] = make([]bool, fieldDimentionY)
+		laberth.ArrayToMap[i] = make([]MapPointable, fieldDimentionY)
 	}
 }

@@ -80,21 +80,13 @@ func SetObjectPositions(laberth *models.Labyrinth) (player, target models.Coords
 }
 
 // CreateNewMap func
-func CreateNewMap(xSize, ySize, sizeField int, movementDistance float32) (laberth models.Labyrinth) {
-
+func CreateNewLabyrinth(laberth *models.Labyrinth) {
+	var newMapBool models.MapBool
 	s1 := rand.NewSource(time.Now().UnixNano())
-
-	laberth = models.Labyrinth{
-		SizeField:        sizeField,
-		MovementDistance: movementDistance,
-	}
-
-	laberth.SetArrays(xSize, ySize)
+	r1 := rand.New(s1)
 
 	fieldDimentionX := len(laberth.ArrayToMap)
 	fieldDimentionY := len(laberth.ArrayToMap[0])
-	var newMapBool models.MapBool
-	r1 := rand.New(s1)
 
 	for i := 0; i < fieldDimentionX; i++ {
 		for j := 0; j < fieldDimentionY; j++ {
@@ -106,6 +98,8 @@ func CreateNewMap(xSize, ySize, sizeField int, movementDistance float32) (labert
 			laberth.ArrayToMap[i][j] = newMapBool
 		}
 	}
-
-	return
+	laberth.ArrayToCheck = make([][]bool, fieldDimentionX)
+	for i := range laberth.ArrayToCheck {
+		laberth.ArrayToCheck[i] = make([]bool, fieldDimentionY)
+	}
 }

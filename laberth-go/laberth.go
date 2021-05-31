@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/camuschino/laberth-go/models"
 	"github.com/camuschino/laberth-go/utils"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -15,46 +16,55 @@ const (
 	movementDistance                              float32 = float32(sizeField)
 )
 
-func run() {
-	cfg := pixelgl.WindowConfig{
+var (
+	laberth        models.Labyrinth
+	player, target models.Coords
+)
+
+func getWindowConfigs() pixelgl.WindowConfig {
+	return pixelgl.WindowConfig{
 		Title:  "Laberth",
 		Bounds: pixel.R(0, 0, float64(windowDimentionY), float64(windowDimentionX)),
 		VSync:  true,
 	}
+}
 
-	win, err := pixelgl.NewWindow(cfg)
+func getWindowAndImd() (*pixelgl.Window, *imdraw.IMDraw) {
+	win, err := pixelgl.NewWindow(getWindowConfigs())
 	if err != nil {
 		panic(err)
 	}
+	return win, imdraw.New(nil)
+}
 
-	imd := imdraw.New(nil)
+func getNewEmptyMap() models.Labyrinth {
+	laberth := models.Labyrinth{
+		SizeField:        sizeField,
+		MovementDistance: movementDistance,
+	}
+	laberth.CreateNewEmptyMap(fieldDimentionX, fieldDimentionY)
+	return laberth
+}
 
-	laberth := utils.CreateNewMap(fieldDimentionX, fieldDimentionY, sizeField, movementDistance)
+func getNewMapAndObjects(newEmptyMap *models.Labyrinth) (models.Labyrinth, models.Coords, models.Coords) {
 
-	player, target := utils.SetObjectPositions(&laberth)
-	utils.RenderMapAndObjects(&laberth, player, target, imd, win)
+	utils.CreateNewLabyrinth(newEmptyMap)
+	player, target := utils.SetObjectPositions(newEmptyMap)
 
-	algorithm := "BFS"
+	return *newEmptyMap, player, target
+}
 
-	valid := utils.ValidateMap(algorithm, player, target, &laberth, imd, win, sizeField)
-	println(valid)
+func run() {
+
+	win, imd := getWindowAndImd()
+	newEmptyMap := getNewEmptyMap()
 
 	for {
-		laberth := utils.CreateNewMap(fieldDimentionX, fieldDimentionY, sizeField, movementDistance)
-
-		player, target := utils.SetObjectPositions(&laberth)
+		laberth, player, target = getNewMapAndObjects(&newEmptyMap)
 		win.Clear(colornames.Black)
 		imd.Clear()
 		utils.RenderMapAndObjects(&laberth, player, target, imd, win)
-
-		if algorithm == "BFS" {
-			algorithm = "DFS"
-		} else {
-			algorithm = "BFS"
-		}
-
-		valid := utils.ValidateMap(algorithm, player, target, &laberth, imd, win, sizeField)
-		println(valid)
+		utils.ValidateMap("", player, target, &laberth, imd, win, sizeField)
 	}
 }
 
