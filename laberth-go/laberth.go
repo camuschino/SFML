@@ -54,10 +54,18 @@ func getNewMapAndObjects(newEmptyMap *models.Labyrinth) (models.Labyrinth, model
 	return *newEmptyMap, player, target
 }
 
+func example() {
+	for i := 0; i < 10; i++ {
+		println("TEST")
+	}
+}
+
 func run() {
 
 	win, imd := getWindowAndImd()
 	newEmptyMap := getNewEmptyMap()
+
+	go example()
 
 	for {
 		laberth, player, target = getNewMapAndObjects(&newEmptyMap)

@@ -31,16 +31,16 @@ func RenderMapAndObjects(laberth *models.Labyrinth, player, target models.Coords
 				target := mapPointable.TargetInPoint
 				switch target.(type) {
 				case models.Coin:
-					getObjectsToRender(imd, target.GetMapPoint(), colornames.Blue, laberth)
+					drawObjectToRender(imd, target.GetMapPoint(), colornames.Blue, laberth)
 				case models.Enemy:
-					getObjectsToRender(imd, target.GetMapPoint(), colornames.Greenyellow, laberth)
+					drawObjectToRender(imd, target.GetMapPoint(), colornames.Greenyellow, laberth)
 				}
 			}
 		}
 	}
 
-	getObjectsToRender(imd, player, colornames.Aqua, laberth)
-	getObjectsToRender(imd, target, colornames.Red, laberth)
+	drawObjectToRender(imd, player, colornames.Aqua, laberth)
+	drawObjectToRender(imd, target, colornames.Red, laberth)
 
 	imd.Draw(win)
 	win.Update()
@@ -53,7 +53,7 @@ func getWall(x, y, sizeField int) (px pixel.Rect) {
 	return
 }
 
-func getObjectsToRender(imd *imdraw.IMDraw, object models.Coords, color color.Color, laberth *models.Labyrinth) {
+func drawObjectToRender(imd *imdraw.IMDraw, object models.Coords, color color.Color, laberth *models.Labyrinth) {
 
 	objectToRender := pixel.Vec{
 		X: float64((object.XPoint * laberth.SizeField) + int(laberth.MovementDistance/2)),

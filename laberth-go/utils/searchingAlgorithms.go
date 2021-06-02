@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	target    models.Coords
-	sizeField int
+	target                                      models.Coords
+	sizeField, fieldDimentionX, fieldDimentionY int
 )
 
 type LabSolver interface {
@@ -32,6 +32,9 @@ func ValidateMap(algorithm string, player, targetOriginal models.Coords, laberth
 	target = targetOriginal
 	sizeField = sizeFieldOriginal
 
+	fieldDimentionX = len(laberth.ArrayToMap)
+	fieldDimentionY = len(laberth.ArrayToMap[0])
+
 	switch algorithm {
 	case "DFS":
 		seeker.checkMapByBFS(player, target, laberth, imd, win)
@@ -48,20 +51,7 @@ func ValidateMap(algorithm string, player, targetOriginal models.Coords, laberth
 func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (score int) {
 	slice := []models.Coords{}
 
-	fieldDimentionX := len(laberth.ArrayToMap)
-	fieldDimentionY := len(laberth.ArrayToMap[0])
-
 	upPoint, downPoint, leftPoint, rightPoint := player, player, player, player
-
-	downPoint.YPoint--
-	if CheckLimit(downPoint.YPoint, fieldDimentionY) && !CheckPointIsWall(downPoint, laberth) {
-		slice = append(slice, downPoint)
-	}
-
-	leftPoint.XPoint--
-	if CheckLimit(leftPoint.XPoint, fieldDimentionX) && !CheckPointIsWall(leftPoint, laberth) {
-		slice = append(slice, leftPoint)
-	}
 
 	upPoint.YPoint++
 	if CheckLimit(upPoint.YPoint, fieldDimentionY) && !CheckPointIsWall(upPoint, laberth) {
@@ -71,6 +61,16 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, labe
 	rightPoint.XPoint++
 	if CheckLimit(rightPoint.XPoint, fieldDimentionX) && !CheckPointIsWall(rightPoint, laberth) {
 		slice = append(slice, rightPoint)
+	}
+
+	downPoint.YPoint--
+	if CheckLimit(downPoint.YPoint, fieldDimentionY) && !CheckPointIsWall(downPoint, laberth) {
+		slice = append(slice, downPoint)
+	}
+
+	leftPoint.XPoint--
+	if CheckLimit(leftPoint.XPoint, fieldDimentionX) && !CheckPointIsWall(leftPoint, laberth) {
+		slice = append(slice, leftPoint)
 	}
 
 	for len(slice) > 0 {
@@ -97,20 +97,11 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, labe
 		}
 
 		renderingStep(first, laberth.SizeField, colornames.Greenyellow, imd, win)
+		CheckTargetPosition(win, imd, laberth, &target)
 
-		time.Sleep(1 * time.Millisecond)
+		time.Sleep(15 * time.Millisecond)
 
 		upPoint, downPoint, leftPoint, rightPoint := first, first, first, first
-
-		leftPoint.YPoint--
-		if CheckLimit(leftPoint.YPoint, fieldDimentionY) && CheckMapPoint(leftPoint, laberth) {
-			slice = append(slice, leftPoint)
-		}
-
-		downPoint.XPoint--
-		if CheckLimit(downPoint.XPoint, fieldDimentionX) && CheckMapPoint(downPoint, laberth) {
-			slice = append(slice, downPoint)
-		}
 
 		upPoint.YPoint++
 		if CheckLimit(upPoint.YPoint, fieldDimentionY) && CheckMapPoint(upPoint, laberth) {
@@ -120,6 +111,16 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, labe
 		rightPoint.XPoint++
 		if CheckLimit(rightPoint.XPoint, fieldDimentionX) && CheckMapPoint(rightPoint, laberth) {
 			slice = append(slice, rightPoint)
+		}
+
+		leftPoint.YPoint--
+		if CheckLimit(leftPoint.YPoint, fieldDimentionY) && CheckMapPoint(leftPoint, laberth) {
+			slice = append(slice, leftPoint)
+		}
+
+		downPoint.XPoint--
+		if CheckLimit(downPoint.XPoint, fieldDimentionX) && CheckMapPoint(downPoint, laberth) {
+			slice = append(slice, downPoint)
 		}
 	}
 
