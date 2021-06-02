@@ -73,9 +73,10 @@ func (algh AlgorithmsSearching) checkMapByBFS(player, target models.Coords, labe
 		slice = append(slice, leftPoint)
 	}
 
-	for len(slice) > 0 {
-		first := slice[0]
-		slice = slice[1:]
+	var first models.Coords
+
+	for ; len(slice) > 0; slice = slice[1:] {
+		first = slice[0]
 
 		// This check if this point is playable. (true means false, because there's a wall)
 		if !CheckMapPoint(first, laberth) {
