@@ -42,8 +42,8 @@ func RenderMapAndObjects(laberth *models.Labyrinth, player, target models.Coords
 	drawObjectToRender(imd, player, colornames.Aqua, laberth)
 	drawObjectToRender(imd, target, colornames.Red, laberth)
 
-	imd.Draw(win)
-	win.Update()
+	// imd.Draw(win)
+	// win.Update()
 }
 
 func getWall(x, y, sizeField int) (px pixel.Rect) {
@@ -65,7 +65,7 @@ func drawObjectToRender(imd *imdraw.IMDraw, object models.Coords, color color.Co
 	imd.Circle(float64(laberth.MovementDistance/2), 0)
 }
 
-func renderingStep(point models.Coords, labertSizeField int, color color.Color, imd *imdraw.IMDraw, win *pixelgl.Window) {
+func RenderingStep(point models.Coords, labertSizeField int, color color.Color, imd *imdraw.IMDraw, win *pixelgl.Window) {
 	imd.Color = color
 	px := getWall(point.XPoint, point.YPoint, labertSizeField)
 	imd.Push(px.Min, px.Max)

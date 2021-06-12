@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/camuschino/laberth-go/models"
 	"github.com/camuschino/laberth-go/utils"
 	"github.com/faiface/pixel"
@@ -54,9 +56,18 @@ func getNewMapAndObjects(newEmptyMap *models.Labyrinth) (models.Labyrinth, model
 	return *newEmptyMap, player, target
 }
 
-func example() {
-	for i := 0; i < 10; i++ {
-		println("TEST")
+// func renderThread(win *pixelgl.Window, imd *imdraw.IMDraw) {
+// 	for {
+// 		time.Sleep(10 * time.Millisecond)
+// 		imd.Draw(win)
+// 		win.Update()
+// 	}
+// }
+
+func movementThread(win *pixelgl.Window, imd *imdraw.IMDraw, target *models.Coords, laberth *models.Labyrinth) {
+	for {
+		time.Sleep(10 * time.Millisecond)
+		utils.CheckTargetPosition(win, imd, laberth, target)
 	}
 }
 
@@ -65,14 +76,15 @@ func run() {
 	win, imd := getWindowAndImd()
 	newEmptyMap := getNewEmptyMap()
 
-	go example()
+	// go renderThread(win, imd)
+	go movementThread(win, imd, &target, &laberth)
 
 	for {
 		laberth, player, target = getNewMapAndObjects(&newEmptyMap)
 		win.Clear(colornames.Black)
 		imd.Clear()
 		utils.RenderMapAndObjects(&laberth, player, target, imd, win)
-		utils.ValidateMap("", player, target, &laberth, imd, win, sizeField)
+		utils.ValidateMap("", player, &target, &laberth, imd, win, sizeField)
 	}
 }
 
