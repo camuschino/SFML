@@ -48,25 +48,17 @@ func getNewEmptyMap() models.Labyrinth {
 	return laberth
 }
 
-func getNewMapAndObjects(newEmptyMap *models.Labyrinth) (models.Labyrinth, models.Coords, models.Coords) {
+func getNewMapAndObjects(newEmptyMap *models.Labyrinth) (models.Coords, models.Coords) {
 
 	utils.CreateNewLabyrinth(newEmptyMap)
 	player, target := utils.SetObjectPositions(newEmptyMap)
 
-	return *newEmptyMap, player, target
+	return player, target
 }
-
-// func renderThread(win *pixelgl.Window, imd *imdraw.IMDraw) {
-// 	for {
-// 		time.Sleep(10 * time.Millisecond)
-// 		imd.Draw(win)
-// 		win.Update()
-// 	}
-// }
 
 func movementThread(win *pixelgl.Window, imd *imdraw.IMDraw, target *models.Coords, laberth *models.Labyrinth) {
 	for {
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(1 * time.Millisecond)
 		utils.CheckTargetPosition(win, imd, laberth, target)
 	}
 }
@@ -74,13 +66,19 @@ func movementThread(win *pixelgl.Window, imd *imdraw.IMDraw, target *models.Coor
 func run() {
 
 	win, imd := getWindowAndImd()
-	newEmptyMap := getNewEmptyMap()
+	laberth := getNewEmptyMap()
 
-	// go renderThread(win, imd)
-	go movementThread(win, imd, &target, &laberth)
+	targetImd := imdraw.New(nil)
+	go movementThread(win, targetImd, &target, &laberth)
+
+	go func() {
+		for {
+			win.Update()
+		}
+	}()
 
 	for {
-		laberth, player, target = getNewMapAndObjects(&newEmptyMap)
+		player, target = getNewMapAndObjects(&laberth)
 		win.Clear(colornames.Black)
 		imd.Clear()
 		utils.RenderMapAndObjects(&laberth, player, target, imd, win)

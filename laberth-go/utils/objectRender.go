@@ -31,19 +31,13 @@ func RenderMapAndObjects(laberth *models.Labyrinth, player, target models.Coords
 				target := mapPointable.TargetInPoint
 				switch target.(type) {
 				case models.Coin:
-					drawObjectToRender(imd, target.GetMapPoint(), colornames.Blue, laberth)
+					DrawObjectToRender(imd, target.GetMapPoint(), colornames.Blue, laberth)
 				case models.Enemy:
-					drawObjectToRender(imd, target.GetMapPoint(), colornames.Greenyellow, laberth)
+					DrawObjectToRender(imd, target.GetMapPoint(), colornames.Greenyellow, laberth)
 				}
 			}
 		}
 	}
-
-	drawObjectToRender(imd, player, colornames.Aqua, laberth)
-	drawObjectToRender(imd, target, colornames.Red, laberth)
-
-	// imd.Draw(win)
-	// win.Update()
 }
 
 func getWall(x, y, sizeField int) (px pixel.Rect) {
@@ -53,8 +47,7 @@ func getWall(x, y, sizeField int) (px pixel.Rect) {
 	return
 }
 
-func drawObjectToRender(imd *imdraw.IMDraw, object models.Coords, color color.Color, laberth *models.Labyrinth) {
-
+func DrawObjectToRender(imd *imdraw.IMDraw, object models.Coords, color color.Color, laberth *models.Labyrinth) {
 	objectToRender := pixel.Vec{
 		X: float64((object.XPoint * laberth.SizeField) + int(laberth.MovementDistance/2)),
 		Y: float64((object.YPoint * laberth.SizeField) + int(laberth.MovementDistance/2)),
@@ -65,11 +58,10 @@ func drawObjectToRender(imd *imdraw.IMDraw, object models.Coords, color color.Co
 	imd.Circle(float64(laberth.MovementDistance/2), 0)
 }
 
-func RenderingStep(point models.Coords, labertSizeField int, color color.Color, imd *imdraw.IMDraw, win *pixelgl.Window) {
+func RenderingStep(point models.Coords, laberth *models.Labyrinth, color color.Color, imd *imdraw.IMDraw, win *pixelgl.Window) {
 	imd.Color = color
-	px := getWall(point.XPoint, point.YPoint, labertSizeField)
+	px := getWall(point.XPoint, point.YPoint, laberth.SizeField)
 	imd.Push(px.Min, px.Max)
 	imd.Rectangle(0)
 	imd.Draw(win)
-	win.Update()
 }

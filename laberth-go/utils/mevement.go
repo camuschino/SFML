@@ -8,48 +8,44 @@ import (
 )
 
 var (
-	coorClone models.Coords
+	nextPosition models.Coords
 )
 
+func moveTarget(nextPosition models.Coords, target *models.Coords, positionToCheck, limit int, imd *imdraw.IMDraw, laberth *models.Labyrinth) {
+
+	if CheckLimit(positionToCheck, limit) && CheckMapPoint(nextPosition, laberth) {
+		DrawObjectToRender(imd, *target, colornames.Black, laberth)
+		*target = nextPosition
+	}
+}
+
 func CheckTargetPosition(win *pixelgl.Window, imd *imdraw.IMDraw, laberth *models.Labyrinth, target *models.Coords) {
+	imd.Clear()
 
 	if win.JustPressed(pixelgl.KeyUp) {
-		coorClone = *target
-		coorClone.YPoint++
-		if CheckLimit(coorClone.YPoint, len(laberth.ArrayToMap[0])) && CheckMapPoint(coorClone, laberth) {
-			drawObjectToRender(imd, *target, colornames.Black, laberth)
-			target.YPoint++
-			drawObjectToRender(imd, *target, colornames.Red, laberth)
-		}
+		nextPosition = *target
+		nextPosition.YPoint++
+		moveTarget(nextPosition, target, nextPosition.YPoint, len(laberth.ArrayToMap[0]), imd, laberth)
 	}
 
 	if win.JustPressed(pixelgl.KeyDown) {
-		coorClone = *target
-		coorClone.YPoint--
-		if CheckLimit(coorClone.YPoint, len(laberth.ArrayToMap[0])) && CheckMapPoint(coorClone, laberth) {
-			drawObjectToRender(imd, *target, colornames.Black, laberth)
-			target.YPoint--
-			drawObjectToRender(imd, *target, colornames.Red, laberth)
-		}
+		nextPosition = *target
+		nextPosition.YPoint--
+		moveTarget(nextPosition, target, nextPosition.YPoint, len(laberth.ArrayToMap[0]), imd, laberth)
 	}
 
 	if win.JustPressed(pixelgl.KeyRight) {
-		coorClone = *target
-		coorClone.XPoint++
-		if CheckLimit(coorClone.XPoint, len(laberth.ArrayToMap)) && CheckMapPoint(coorClone, laberth) {
-			drawObjectToRender(imd, *target, colornames.Black, laberth)
-			target.XPoint++
-			drawObjectToRender(imd, *target, colornames.Red, laberth)
-		}
+		nextPosition = *target
+		nextPosition.XPoint++
+		moveTarget(nextPosition, target, nextPosition.XPoint, len(laberth.ArrayToMap[0]), imd, laberth)
 	}
 
 	if win.JustPressed(pixelgl.KeyLeft) {
-		coorClone = *target
-		coorClone.XPoint--
-		if CheckLimit(coorClone.XPoint, len(laberth.ArrayToMap)) && CheckMapPoint(coorClone, laberth) {
-			drawObjectToRender(imd, *target, colornames.Black, laberth)
-			target.XPoint--
-			drawObjectToRender(imd, *target, colornames.Red, laberth)
-		}
+		nextPosition = *target
+		nextPosition.XPoint--
+		moveTarget(nextPosition, target, nextPosition.XPoint, len(laberth.ArrayToMap[0]), imd, laberth)
 	}
+
+	DrawObjectToRender(imd, *target, colornames.Red, laberth)
+	imd.Draw(win)
 }

@@ -69,7 +69,7 @@ func checkMapByBFS(player models.Coords, target *models.Coords, laberth *models.
 		laberth.ArrayToCheck[first.XPoint][first.YPoint] = true
 
 		if *target == first {
-			RenderingStep(first, laberth.SizeField, colornames.Blue, imd, win)
+			RenderingStep(first, laberth, colornames.Blue, imd, win)
 			time.Sleep(1000 * time.Millisecond)
 			return score
 		}
@@ -80,9 +80,9 @@ func checkMapByBFS(player models.Coords, target *models.Coords, laberth *models.
 			println(score)
 		}
 
-		RenderingStep(first, laberth.SizeField, colornames.Greenyellow, imd, win)
+		RenderingStep(first, laberth, colornames.Greenyellow, imd, win)
 
-		time.Sleep(30 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 
 		upPoint, downPoint, leftPoint, rightPoint := first, first, first, first
 
@@ -110,68 +110,68 @@ func checkMapByBFS(player models.Coords, target *models.Coords, laberth *models.
 	return 0
 }
 
-func checkMapByDFS(player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window, score int) models.MapBool {
+// func checkMapByDFS(player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window, score int) models.MapBool {
 
-	fieldDimentionX := len(laberth.ArrayToMap)
-	fieldDimentionY := len(laberth.ArrayToMap[0])
+// 	fieldDimentionX := len(laberth.ArrayToMap)
+// 	fieldDimentionY := len(laberth.ArrayToMap[0])
 
-	// Check vertical limit in the map.
-	if !CheckLimit(player.XPoint, fieldDimentionX) {
-		return false
-	}
+// 	// Check vertical limit in the map.
+// 	if !CheckLimit(player.XPoint, fieldDimentionX) {
+// 		return false
+// 	}
 
-	// Check horizontal limit in the map.
-	if !CheckLimit(player.YPoint, fieldDimentionY) {
-		return false
-	}
+// 	// Check horizontal limit in the map.
+// 	if !CheckLimit(player.YPoint, fieldDimentionY) {
+// 		return false
+// 	}
 
-	// This check if this point is playable, AND
-	// Check if this position is already previously checked.
-	if !CheckMapPoint(player, laberth) {
-		return false
-	}
+// 	// This check if this point is playable, AND
+// 	// Check if this position is already previously checked.
+// 	if !CheckMapPoint(player, laberth) {
+// 		return false
+// 	}
 
-	laberth.ArrayToCheck[player.XPoint][player.YPoint] = true
+// 	laberth.ArrayToCheck[player.XPoint][player.YPoint] = true
 
-	switch mapPointable := laberth.ArrayToMap[player.XPoint][player.YPoint].(type) {
-	case models.MapPoint:
-		score = mapPointable.TargetInPoint.Collision(score)
-		println(score)
-	}
+// 	switch mapPointable := laberth.ArrayToMap[player.XPoint][player.YPoint].(type) {
+// 	case models.MapPoint:
+// 		score = mapPointable.TargetInPoint.Collision(score)
+// 		println(score)
+// 	}
 
-	if target == player {
-		RenderingStep(player, laberth.SizeField, colornames.Blue, imd, win)
-		time.Sleep(1000 * time.Millisecond)
-		return true
-	}
+// 	if target == player {
+// 		RenderingStep(player, laberth.SizeField, colornames.Blue, imd, win)
+// 		time.Sleep(1000 * time.Millisecond)
+// 		return true
+// 	}
 
-	RenderingStep(player, laberth.SizeField, colornames.Greenyellow, imd, win)
+// 	RenderingStep(player, laberth.SizeField, colornames.Greenyellow, imd, win)
 
-	time.Sleep(10 * time.Millisecond)
+// 	time.Sleep(10 * time.Millisecond)
 
-	leftPoint := player
-	leftPoint.XPoint--
-	if checkMapByDFS(leftPoint, target, laberth, imd, win, score) {
-		return true
-	}
+// 	leftPoint := player
+// 	leftPoint.XPoint--
+// 	if checkMapByDFS(leftPoint, target, laberth, imd, win, score) {
+// 		return true
+// 	}
 
-	downPoint := player
-	downPoint.YPoint--
-	if checkMapByDFS(downPoint, target, laberth, imd, win, score) {
-		return true
-	}
+// 	downPoint := player
+// 	downPoint.YPoint--
+// 	if checkMapByDFS(downPoint, target, laberth, imd, win, score) {
+// 		return true
+// 	}
 
-	rightPoint := player
-	rightPoint.XPoint++
-	if checkMapByDFS(rightPoint, target, laberth, imd, win, score) {
-		return true
-	}
+// 	rightPoint := player
+// 	rightPoint.XPoint++
+// 	if checkMapByDFS(rightPoint, target, laberth, imd, win, score) {
+// 		return true
+// 	}
 
-	upPoint := player
-	upPoint.YPoint++
+// 	upPoint := player
+// 	upPoint.YPoint++
 
-	return checkMapByDFS(upPoint, target, laberth, imd, win, score)
-}
+// 	return checkMapByDFS(upPoint, target, laberth, imd, win, score)
+// }
 
 func CheckLimit(currentValue, limit int) bool {
 	return currentValue >= 0 && currentValue < limit-1
