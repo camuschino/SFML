@@ -59,6 +59,7 @@ func getNewMapAndObjects(newEmptyMap *models.Labyrinth) (models.Coords, models.C
 func movementThread(win *pixelgl.Window, imd *imdraw.IMDraw, target *models.Coords, laberth *models.Labyrinth) {
 	for {
 		time.Sleep(1 * time.Millisecond)
+		win.Update()
 		utils.CheckTargetPosition(win, imd, laberth, target)
 	}
 }
@@ -70,12 +71,6 @@ func run() {
 
 	targetImd := imdraw.New(nil)
 	go movementThread(win, targetImd, &target, &laberth)
-
-	go func() {
-		for {
-			win.Update()
-		}
-	}()
 
 	for {
 		player, target = getNewMapAndObjects(&laberth)

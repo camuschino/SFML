@@ -10,7 +10,6 @@ import (
 )
 
 var (
-	target                           models.Coords
 	fieldDimentionX, fieldDimentionY int
 )
 
@@ -82,7 +81,7 @@ func checkMapByBFS(player models.Coords, target *models.Coords, laberth *models.
 
 		RenderingStep(first, laberth, colornames.Greenyellow, imd, win)
 
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 
 		upPoint, downPoint, leftPoint, rightPoint := first, first, first, first
 
