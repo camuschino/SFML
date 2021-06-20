@@ -56,7 +56,14 @@ func checkMapByBFS(player models.Coords, target *models.Coords, laberth *models.
 		slice = append(slice, leftPoint)
 	}
 
+	if len(slice) == 0 {
+		score = 0
+		return
+	}
+
 	var first models.Coords
+
+	first, slice = slice[0], slice[1:]
 
 	for ; len(slice) > 0; first, slice = slice[0], slice[1:] {
 
@@ -81,7 +88,7 @@ func checkMapByBFS(player models.Coords, target *models.Coords, laberth *models.
 
 		RenderingStep(first, laberth, colornames.Greenyellow, imd, win)
 
-		time.Sleep(200 * time.Millisecond)
+		time.Sleep(20 * time.Millisecond)
 
 		upPoint, downPoint, leftPoint, rightPoint := first, first, first, first
 
