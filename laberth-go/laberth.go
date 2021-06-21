@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	windowDimentionX, windowDimentionY, sizeBlock int     = 600, 600, 50 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
+	windowDimentionX, windowDimentionY, sizeBlock int     = 700, 700, 10 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
 	fieldDimentionX, fieldDimentionY              int     = ((windowDimentionX / sizeBlock) * 2) + 1, ((windowDimentionY / sizeBlock) * 2) + 1
 	sizeField                                     int     = sizeBlock / 2
 	movementDistance                              float32 = float32(sizeField)
@@ -58,7 +58,7 @@ func getNewMapAndObjects(newEmptyMap *models.Labyrinth) (models.Coords, models.C
 
 func movementThread(win *pixelgl.Window, imd *imdraw.IMDraw, target *models.Coords, laberth *models.Labyrinth) {
 	for {
-		time.Sleep(1 * time.Millisecond)
+		time.Sleep(10 * time.Millisecond)
 		win.Update()
 		utils.CheckTargetPosition(win, imd, laberth, target)
 	}

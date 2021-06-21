@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"sync"
 	"time"
 
 	"github.com/camuschino/laberth-go/models"
@@ -31,39 +32,13 @@ func ValidateMap(algorithm string, player models.Coords, target *models.Coords, 
 	return
 }
 
-func checkMapByBFS(player models.Coords, target *models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) (score int) {
-	slice := []models.Coords{}
-
-	upPoint, downPoint, leftPoint, rightPoint := player, player, player, player
-
-	upPoint.YPoint++
-	if CheckLimit(upPoint.YPoint, fieldDimentionY) && !CheckPointIsWall(upPoint, laberth) {
-		slice = append(slice, upPoint)
-	}
-
-	rightPoint.XPoint++
-	if CheckLimit(rightPoint.XPoint, fieldDimentionX) && !CheckPointIsWall(rightPoint, laberth) {
-		slice = append(slice, rightPoint)
-	}
-
-	downPoint.YPoint--
-	if CheckLimit(downPoint.YPoint, fieldDimentionY) && !CheckPointIsWall(downPoint, laberth) {
-		slice = append(slice, downPoint)
-	}
-
-	leftPoint.XPoint--
-	if CheckLimit(leftPoint.XPoint, fieldDimentionX) && !CheckPointIsWall(leftPoint, laberth) {
-		slice = append(slice, leftPoint)
-	}
-
-	if len(slice) == 0 {
-		score = 0
-		return
-	}
+func forBFS(slice []models.Coords, target *models.Coords, mutex *sync.Mutex, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) {
 
 	var first models.Coords
 
-	first, slice = slice[0], slice[1:]
+	var score int
+
+	first = slice[0]
 
 	for ; len(slice) > 0; first, slice = slice[0], slice[1:] {
 
@@ -75,9 +50,9 @@ func checkMapByBFS(player models.Coords, target *models.Coords, laberth *models.
 		laberth.ArrayToCheck[first.XPoint][first.YPoint] = true
 
 		if *target == first {
-			RenderingStep(first, laberth, colornames.Blue, imd, win)
+			RenderingStep(first, laberth, colornames.Blue, mutex, imd, win)
 			time.Sleep(1000 * time.Millisecond)
-			return score
+			laberth.Over <- true
 		}
 
 		switch mapPointable := laberth.ArrayToMap[first.XPoint][first.YPoint].(type) {
@@ -86,34 +61,64 @@ func checkMapByBFS(player models.Coords, target *models.Coords, laberth *models.
 			println(score)
 		}
 
-		RenderingStep(first, laberth, colornames.Greenyellow, imd, win)
+		RenderingStep(first, laberth, colornames.Greenyellow, mutex, imd, win)
 
-		time.Sleep(20 * time.Millisecond)
-
-		upPoint, downPoint, leftPoint, rightPoint := first, first, first, first
-
-		upPoint.YPoint++
-		if CheckLimit(upPoint.YPoint, fieldDimentionY) && CheckMapPoint(upPoint, laberth) {
-			slice = append(slice, upPoint)
-		}
-
-		rightPoint.XPoint++
-		if CheckLimit(rightPoint.XPoint, fieldDimentionX) && CheckMapPoint(rightPoint, laberth) {
-			slice = append(slice, rightPoint)
-		}
-
-		leftPoint.YPoint--
-		if CheckLimit(leftPoint.YPoint, fieldDimentionY) && CheckMapPoint(leftPoint, laberth) {
-			slice = append(slice, leftPoint)
-		}
-
-		downPoint.XPoint--
-		if CheckLimit(downPoint.XPoint, fieldDimentionX) && CheckMapPoint(downPoint, laberth) {
-			slice = append(slice, downPoint)
-		}
+		getCoordsSlice(first, &slice, laberth)
 	}
 
-	return 0
+	laberth.Over <- false
+}
+
+func getCoordsSlice(player models.Coords, slice *[]models.Coords, laberth *models.Labyrinth) {
+
+	upPoint, downPoint, leftPoint, rightPoint := player, player, player, player
+
+	upPoint.YPoint++
+	if CheckLimit(upPoint.YPoint, fieldDimentionY) && !CheckPointIsWall(upPoint, laberth) {
+		*slice = append(*slice, upPoint)
+	}
+
+	rightPoint.XPoint++
+	if CheckLimit(rightPoint.XPoint, fieldDimentionX) && !CheckPointIsWall(rightPoint, laberth) {
+		*slice = append(*slice, rightPoint)
+	}
+
+	downPoint.YPoint--
+	if CheckLimit(downPoint.YPoint, fieldDimentionY) && !CheckPointIsWall(downPoint, laberth) {
+		*slice = append(*slice, downPoint)
+	}
+
+	leftPoint.XPoint--
+	if CheckLimit(leftPoint.XPoint, fieldDimentionX) && !CheckPointIsWall(leftPoint, laberth) {
+		*slice = append(*slice, leftPoint)
+	}
+}
+
+func checkMapByBFS(player models.Coords, target *models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) {
+
+	mutex := &sync.Mutex{}
+	var slice []models.Coords
+	var laberthOver bool = false
+	time.Sleep(2500 * time.Millisecond)
+
+	for {
+		getCoordsSlice(player, &slice, laberth)
+		if len(slice) == 0 {
+			continue
+		}
+		go func() {
+			laberthOver = <-laberth.Over
+		}()
+		if !laberthOver {
+			go forBFS(slice, target, mutex, laberth, imd, win)
+		} else {
+			println("FINISHED!!!")
+			break
+		}
+
+		time.Sleep(500 * time.Millisecond)
+		player = GenerateValidMapPoint(laberth)
+	}
 }
 
 // func checkMapByDFS(player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window, score int) models.MapBool {

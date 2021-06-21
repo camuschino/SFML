@@ -2,6 +2,7 @@ package utils
 
 import (
 	"image/color"
+	"sync"
 
 	"github.com/camuschino/laberth-go/models"
 	"github.com/faiface/pixel"
@@ -58,10 +59,12 @@ func DrawObjectToRender(imd *imdraw.IMDraw, object models.Coords, color color.Co
 	imd.Circle(float64(laberth.MovementDistance/2), 0)
 }
 
-func RenderingStep(point models.Coords, laberth *models.Labyrinth, color color.Color, imd *imdraw.IMDraw, win *pixelgl.Window) {
+func RenderingStep(point models.Coords, laberth *models.Labyrinth, color color.Color, mutex *sync.Mutex, imd *imdraw.IMDraw, win *pixelgl.Window) {
 	imd.Color = color
 	px := getWall(point.XPoint, point.YPoint, laberth.SizeField)
+	mutex.Lock()
 	imd.Push(px.Min, px.Max)
 	imd.Rectangle(0)
 	imd.Draw(win)
+	mutex.Unlock()
 }

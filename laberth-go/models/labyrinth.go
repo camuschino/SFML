@@ -6,12 +6,15 @@ type Labyrinth struct {
 	MovementDistance float32
 	ArrayToCheck     [][]bool
 	ArrayToMap       [][]MapPointable
+	Over             chan bool
 }
 
 // SetArrays func
 func (laberth *Labyrinth) CreateNewEmptyMap(fieldDimentionX, fieldDimentionY int) {
 	laberth.ArrayToCheck = make([][]bool, fieldDimentionX)
 	laberth.ArrayToMap = make([][]MapPointable, fieldDimentionX)
+
+	laberth.Over = make(chan bool)
 
 	for i := range laberth.ArrayToCheck {
 		laberth.ArrayToCheck[i] = make([]bool, fieldDimentionY)
